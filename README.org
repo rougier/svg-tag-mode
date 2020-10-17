@@ -1,6 +1,18 @@
-*** SVG tag minor mode
+** SVG tag minor mode (Emacs)
 
 A small minor mode to replace keywords or regular expression with SVG rounded
 box labels. See [[file:/example.el][example.el]] for example usage.
+
+*** Installation
+
+#+begin_src elisp
+(quelpa '(svg-tag-mode :repo "rougier/svg-tag-mode"
+                       :fetcher github
+                       :files ("svg-tag-mode.el")))
+#+end_src
+
+*** Demonstration 
+
+Open [[file:/example.el][example.el]] and evaluate buffer
 
 [[./screenshot.png]]

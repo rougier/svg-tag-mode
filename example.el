@@ -14,6 +14,8 @@
 ;; For a full copy of the GNU General Public License
 ;; see <http://www.gnu.org/licenses/>.
 
+(require 'svg-tag-mode)
+
 (defface svg-tag-note-face
   '((t :foreground "black" :background "white" :box "black"
        :family "Roboto Mono" :weight light :height 120))
@@ -41,6 +43,8 @@
          `(face nil display ,(svg-tag-quasi-round (match-string 0))))
         ("\\(=[0-9a-zA-Z- ]+?=\\)" 1
          `(face nil display ,(svg-tag-keyboard (match-string 0))))))
+
+(svg-tag-mode 1)
 
 ;; A tag function using SVG to display a rounded box with outer and inner
 ;; padding and a controllable box radius. The resulting SVG is perfectly
