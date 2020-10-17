@@ -1,0 +1,6 @@
+*** SVG tag minor mode
+
+A small minor mode to replace keywords or regular expression with SVG rounded
+box labels. See [[file:/example.el][example.el]] for example usage.
+
+[[./screenshot.png]]
