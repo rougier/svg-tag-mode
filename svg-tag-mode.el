@@ -25,8 +25,8 @@
 
 ;;; Commentary:
 
-;; This minor mode replaces keywords or expressions with a SVG rounded
-;; box label this customizable.
+;; This minor mode replaces keywords or expressions with SVG rounded
+;; box labels that are fully customizable.
 ;;
 ;; Usage example:
 ;; --------------
@@ -131,13 +131,13 @@
   (if svg-tags
       (font-lock-add-keywords nil svg-tags))
   (setq active-svg-tags (copy-sequence svg-tags))
-  (message "Tag mode on"))
+  (message "SVG tag mode on"))
 
 (defun svg-tag-mode-off ()  
   (if active-svg-tags
       (font-lock-remove-keywords nil active-svg-tags))
   (setq active-svg-tags nil)
-  (message "Tag mode off"))
+  (message "SVG tag mode off"))
 
 (define-minor-mode svg-tag-mode
   "Minor mode for graphical tag as rounded box."
