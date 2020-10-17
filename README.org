@@ -13,6 +13,11 @@ box labels. See [[file:/example.el][example.el]] for example usage.
 
 *** Demonstration 
 
-Open [[file:/example.el][example.el]] and evaluate buffer
+Open [[file:/example.el][example.el]] and evaluate buffer (*M-x evaluate-buffer*)
 
-[[./screenshot.png]]
+*SVG tag mode on*
+[[./svg-tag-on.png]]
+
+*SVG tag mode off*
+[[./svg-tag-off.png]]
+

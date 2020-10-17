@@ -13,7 +13,6 @@
 ;;
 ;; For a full copy of the GNU General Public License
 ;; see <http://www.gnu.org/licenses/>.
-
 (require 'svg-tag-mode)
 
 (defface svg-tag-note-face
@@ -37,35 +36,36 @@
 (setq svg-tags
       '(("\\(:TODO:\\)" 1 `(face nil display ,svg-tag-todo))
         ("\\(:NOTE:\\)" 1 `(face nil display ,svg-tag-note))
-        ("\\(\@[0-9a-zA-Z]\@\\)" 1
+        ("\\(\([0-9a-zA-Z]\)\\)" 1
          `(face nil display ,(svg-tag-round (match-string 0))))
-        ("\\(\@[0-9a-zA-Z][0-9a-zA-Z]\@\\)" 1
+        ("\\(\([0-9a-zA-Z][0-9a-zA-Z]\)\\)" 1
          `(face nil display ,(svg-tag-quasi-round (match-string 0))))
-        ("\\(=[0-9a-zA-Z- ]+?=\\)" 1
+        ("\\(|[0-9a-zA-Z- ]+?|\\)" 1
          `(face nil display ,(svg-tag-keyboard (match-string 0))))))
 
 (svg-tag-mode 1)
 
 ;; A tag function using SVG to display a rounded box with outer and inner
 ;; padding and a controllable box radius. The resulting SVG is perfectly
-;; aligned with regular text such that a =TAG= can be inserted and edited
+;; aligned with regular text such that a |TAG| can be inserted and edited
 ;; anywhere in the text thanks to font-lock and the display property.
 
 ;;|:TODO:| Make a minor mode
 ;;|:NOTE:| Don't know how to do it, help needed…
 ;;|______| Perfect alignment with regular text
 ;;
-;;  Save ................. =C-x=+=C-s=  Help ............... =C-h=
-;;  Save as .............. =C-x=+=C-w=  Cancel ............. =C-g=
-;;  Open a new file ...... =C-x=+=C-f=  Undo ............... =C-z=
-;;  Open recent .......... =C-x=+=C-r=  Close buffer ....... =C-x=+=k=
-;;  Browse directory ......=C-x=+=d=    Quit ............... =C-x=+=C-c=
+;;  Save ................. |C-x|+|C-s|  Help ............... |C-h|
+;;  Save as .............. |C-x|+|C-w|  Cancel ............. |C-g|
+;;  Open a new file ...... |C-x|+|C-f|  Undo ............... |C-z|
+;;  Open recent .......... |C-x|+|C-r|  Close buffer ....... |C-x|+|k|
+;;  Browse directory ......|C-x|+|d|    Quit ............... |C-x|+|C-c|
 
 ;; ------------------------------------------------------------------------
 ;; :NOTE: Sections can be folded or unfolded. If you think a section has
 ;;        disappeared, it's probably because it is folded. To unfold it,
-;;        place the cursor on the section title and press the =tab= key.
+;;        place the cursor on the section title and press the |tab| key.
 ;; ------------------------------------------------------------------------
-;; @1@@2@@3@@4@@5@@Z@@W@@12@@99@
+;; (1)(2)(3)(4)(5)(Z)(W)(12)(99)
 ;; ------------------------------------------------------------------------
+
 
