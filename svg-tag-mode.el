@@ -86,6 +86,11 @@
   :type 'integer
   :group 'svg-tag)
 
+(defcustom svg-tag-default-line-width 1
+  "Default border line width  (in pixels, null or positive)"
+  :type 'integer
+  :group 'svg-tag)
+
 (defcustom svg-tag-vertical-offset 0
   "Vertical offset for text (in pixels).
 This should be zero for most fonts but some fonts may need this."
@@ -108,13 +113,31 @@ This should be zero for most fonts but some fonts may need this."
   "Default face for tag"
   :group 'svg-tag)
 
+;; (defcustom svg-tag-tags
+;;   '((":TODO:" . (svg-tag-make "TODO")))
+;;   "An alist mapping keywords to tags used to display them.
+
+;; Each entry has the form (keyword . tag). Keyword is used as part
+;; of a regular expression and tag can be either a svg tag
+;; previously created by svg-tag-make or a function that takes a
+;; string as argument and returns a tag. When tag is a function, this
+;; allows to create dynamic tags."
+  
+;;   :group 'svg-tag-mode
+;;   :type '(repeat (cons (string :tag "Keyword")
+;;                        (sexp   :tag "Tag"))))
+
+
 (defun svg-tag-make (text &optional face inner-padding outer-padding radius)
   (let* ((face       (or face 'svg-tag-default-face))
          (foreground (face-attribute face :foreground))
          (background (face-attribute face :background))
-         (border     (plist-get (face-attribute face :box) :color))
-         (stroke     1)
-         ;; (stroke     (plist-get (face-attribute face :box) :line-width))
+         (box        (face-attribute face :box))
+         (stroke     (or (plist-get (face-attribute face :box) :color)
+                         foreground))
+         ;; This does not seem to get the actual box line-width
+         (line-width (or (plist-get (face-attribute face :box) :line-width)
+                         svg-tag-default-line-width))
          (family     (face-attribute face :family))
          (weight     (face-attribute face :weight))
          (size       (/ (face-attribute face :height) 10))
@@ -136,18 +159,18 @@ This should be zero for most fonts but some fonts may need this."
          (tag-x (/ (- svg-width tag-width) 2))
          (text-x (+ tag-x (/ (- tag-width (* (length text) tag-char-width)) 2)))
          (text-y (- tag-char-height (- txt-char-height tag-char-height)))
-
+         
          (radius  (or radius svg-tag-default-radius))
          (svg (svg-create svg-width svg-height)))
-
+         
     (svg-rectangle svg tag-x 0 tag-width tag-height
-                   :fill        border
+                   :fill        stroke
                    :rx          radius)
-    (svg-rectangle svg (+ tag-x (/ stroke 2.0)) (/ stroke 2.0)
-                   (- tag-width stroke) (- tag-height stroke)
+    (svg-rectangle svg (+ tag-x (/ line-width 2.0)) (/ line-width 2.0)
+                       (- tag-width line-width) (- tag-height line-width)
                    :fill        background
-                   :rx          (- radius (/ stroke 2.0)))
-    (svg-text      svg text
+                   :rx          (- radius (/ line-width 2.0)))
+    (svg-text      svg text 
                    :font-family family
                    :font-weight weight
                    :font-size   size
