@@ -66,25 +66,59 @@
 (defvar svg-tags nil)
 (defvar active-svg-tags nil)
 
-(defgroup svg-tag nil
-  "SVG tag mode"
-  :group 'faces)
+(defgroup svg-tag-mode nil
+  "Replace keywords with SVG rounded box labels"
+  :group 'convenience
+  :prefix "svg-tag-")
+
+(defcustom svg-tag-default-outer-padding 1
+  "Default outer padding (in characters, null or positive)"
+  :type 'integer
+  :group 'svg-tag-mode)
+
+(defcustom svg-tag-default-inner-padding 1
+  "Default inner padding (in characters, null or positive)"
+  :type 'integer
+  :group 'svg-tag-mode)
+
+(defcustom svg-tag-default-radius 3
+  "Default radius  (in pixels, null or positive)"
+  :type 'integer
+  :group 'svg-tag-mode)
+
+(defcustom svg-tag-vertical-offset 0
+  "Vertical offset for text (in pixels).
+This should be zero for most fonts but some fonts may need this."
+  :type 'integer
+  :group 'svg-tag-mode)
+
+(defcustom svg-tag-horizontal-offset 0
+  "Horizontal offset for text (in pixels).
+This should be zero for most fonts but some fonts may need this."
+  :type 'integer
+  :group 'svg-tag-mode)
+
 
 (defface svg-tag-default-face
-  '((t :foreground "white"
+  `((t :foreground "white"
        :background "orange"
-       :box "orange"
-       :family "Roboto Mono"
-       :weight light
+       :box `(:line-width 1 :color "orange" :style nil)
+       :family ,(face-attribute 'default :family)
+       :weight ,(face-attribute 'default :weight)
        :height 120))
   "Default face for tag"
   :group 'svg-tag-mode)
+
+(plist-get (eval (face-attribute 'svg-tag-default-face :box)) :line-width)
 
 (defun svg-tag-make (text &optional face inner-padding outer-padding radius)
   (let* ((face       (or face 'svg-tag-default-face))
          (foreground (face-attribute face :foreground))
          (background (face-attribute face :background))
-         (border     (face-attribute face :box))
+         (border     (plist-get (eval (face-attribute face :box)) :color))
+         ;; Line below doesn't work for unknown reason
+         ;; (stroke  (plist-get (eval (face-attribute face :box)) :line-width))
+         (stroke     1)
          (family     (face-attribute face :family))
          (weight     (face-attribute face :weight))
          (size       (/ (face-attribute face :height) 10))
@@ -93,8 +127,8 @@
          (tag-char-height (window-font-height nil face))
          (txt-char-width  (window-font-width))
          (txt-char-height (window-font-height))
-         (inner-padding   (or inner-padding 1))
-         (outer-padding   (or outer-padding 0))
+         (inner-padding   (or inner-padding svg-tag-default-inner-padding))
+         (outer-padding   (or outer-padding svg-tag-default-outer-padding))
 
          (text (string-trim text))
          (tag-width (* (+ (length text) inner-padding) txt-char-width))
@@ -107,22 +141,23 @@
          (text-x (+ tag-x (/ (- tag-width (* (length text) tag-char-width)) 2)))
          (text-y (- tag-char-height (- txt-char-height tag-char-height)))
          
-         (radius  (or radius 3))
+         (radius  (or radius svg-tag-default-radius))
          (svg (svg-create svg-width svg-height)))
          
     (svg-rectangle svg tag-x 0 tag-width tag-height
                    :fill        border
                    :rx          radius)
-    (svg-rectangle svg (+ tag-x 0.5) 0.5 (- tag-width 1.0) (- tag-height 1.0)
+    (svg-rectangle svg (+ tag-x (/ stroke 2.0)) (/ stroke 2.0)
+                       (- tag-width stroke) (- tag-height stroke)
                    :fill        background
-                   :rx          (- radius 0.5))
+                   :rx          (- radius (/ stroke 2.0)))
     (svg-text      svg text 
                    :font-family family
                    :font-weight weight
                    :font-size   size
                    :fill        foreground
-                   :x           text-x
-                   :y           text-y)
+                   :x           (+ text-x svg-tag-horizontal-offset)
+                   :y           (+ text-y svg-tag-vertical-offset))
     (svg-image svg :ascent 'center)))
 
 (defun svg-tag-mode-on ()
