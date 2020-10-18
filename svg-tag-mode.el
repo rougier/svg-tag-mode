@@ -6,7 +6,7 @@
 ;; Homepage: https://github.com/rougier/svg-tag-mode
 ;; Keywords: convenience
 
-;; Package-Requires: ((emacs "25"))
+;; Package-Requires: ((emacs "26.1"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -64,39 +64,39 @@
 (eval-when-compile (require 'subr-x))
 
 (defvar svg-tags nil)
-(defvar active-svg-tags nil)
+(defvar svg-tags--active-tags nil)
 
-(defgroup svg-tag-mode nil
+(defgroup svg-tag nil
   "Replace keywords with SVG rounded box labels"
   :group 'convenience
   :prefix "svg-tag-")
 
 (defcustom svg-tag-default-outer-padding 1
-  "Default outer padding (in characters, null or positive)"
+  "Default outer padding (in characters, null or positive)."
   :type 'integer
-  :group 'svg-tag-mode)
+  :group 'svg-tag)
 
 (defcustom svg-tag-default-inner-padding 1
-  "Default inner padding (in characters, null or positive)"
+  "Default inner padding (in characters, null or positive)."
   :type 'integer
-  :group 'svg-tag-mode)
+  :group 'svg-tag)
 
 (defcustom svg-tag-default-radius 3
-  "Default radius  (in pixels, null or positive)"
+  "Default radius  (in pixels, null or positive)."
   :type 'integer
-  :group 'svg-tag-mode)
+  :group 'svg-tag)
 
 (defcustom svg-tag-vertical-offset 0
   "Vertical offset for text (in pixels).
 This should be zero for most fonts but some fonts may need this."
   :type 'integer
-  :group 'svg-tag-mode)
+  :group 'svg-tag)
 
 (defcustom svg-tag-horizontal-offset 0
   "Horizontal offset for text (in pixels).
 This should be zero for most fonts but some fonts may need this."
   :type 'integer
-  :group 'svg-tag-mode)
+  :group 'svg-tag)
 
 (defface svg-tag-default-face
   `((t :foreground "white"
@@ -106,7 +106,7 @@ This should be zero for most fonts but some fonts may need this."
        :weight ,(face-attribute 'default :weight)
        :height 120))
   "Default face for tag"
-  :group 'svg-tag-mode)
+  :group 'svg-tag)
 
 (defun svg-tag-make (text &optional face inner-padding outer-padding radius)
   (let* ((face       (or face 'svg-tag-default-face))
@@ -129,25 +129,25 @@ This should be zero for most fonts but some fonts may need this."
          (text (string-trim text))
          (tag-width (* (+ (length text) inner-padding) txt-char-width))
          (tag-height (* txt-char-height 0.9))
-         
+
          (svg-width (+ tag-width (* outer-padding txt-char-width)))
          (svg-height tag-height)
 
          (tag-x (/ (- svg-width tag-width) 2))
          (text-x (+ tag-x (/ (- tag-width (* (length text) tag-char-width)) 2)))
          (text-y (- tag-char-height (- txt-char-height tag-char-height)))
-         
+
          (radius  (or radius svg-tag-default-radius))
          (svg (svg-create svg-width svg-height)))
-         
+
     (svg-rectangle svg tag-x 0 tag-width tag-height
                    :fill        border
                    :rx          radius)
     (svg-rectangle svg (+ tag-x (/ stroke 2.0)) (/ stroke 2.0)
-                       (- tag-width stroke) (- tag-height stroke)
+                   (- tag-width stroke) (- tag-height stroke)
                    :fill        background
                    :rx          (- radius (/ stroke 2.0)))
-    (svg-text      svg text 
+    (svg-text      svg text
                    :font-family family
                    :font-weight weight
                    :font-size   size
@@ -158,23 +158,25 @@ This should be zero for most fonts but some fonts may need this."
 
 (defun svg-tag-mode-on ()
   (add-to-list 'font-lock-extra-managed-props 'display)
-  (if active-svg-tags
-      (font-lock-remove-keywords nil active-svg-tags))
-  (if svg-tags
-      (font-lock-add-keywords nil svg-tags))
-  (setq active-svg-tags (copy-sequence svg-tags))
+  (when svg-tags--active-tags
+    (font-lock-remove-keywords nil svg-tags--active-tags))
+  (when svg-tags
+    (font-lock-add-keywords nil svg-tags))
+  (setq svg-tags--active-tags (copy-sequence svg-tags))
   (message "SVG tag mode on"))
 
-(defun svg-tag-mode-off ()  
-  (if active-svg-tags
-      (font-lock-remove-keywords nil active-svg-tags))
-  (setq active-svg-tags nil)
+(defun svg-tag-mode-off ()
+  (when svg-tags--active-tags
+    (font-lock-remove-keywords nil svg-tags--active-tags))
+  (setq svg-tags--active-tags nil)
   (message "SVG tag mode off"))
 
 (define-minor-mode svg-tag-mode
   "Minor mode for graphical tag as rounded box."
-  :group 'svg-tag-mode
+  :group 'svg-tag
   (if svg-tag-mode (svg-tag-mode-on) (svg-tag-mode-off))
   (font-lock-flush))
 
 (provide 'svg-tag-mode)
+
+;;; svg-tag-mode.el ends here
