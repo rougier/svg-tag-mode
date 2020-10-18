@@ -98,27 +98,23 @@ This should be zero for most fonts but some fonts may need this."
   :type 'integer
   :group 'svg-tag-mode)
 
-
 (defface svg-tag-default-face
   `((t :foreground "white"
        :background "orange"
-       :box `(:line-width 1 :color "orange" :style nil)
+       :box (:line-width 1 :color "orange" :style nil)
        :family ,(face-attribute 'default :family)
        :weight ,(face-attribute 'default :weight)
        :height 120))
   "Default face for tag"
   :group 'svg-tag-mode)
 
-(plist-get (eval (face-attribute 'svg-tag-default-face :box)) :line-width)
-
 (defun svg-tag-make (text &optional face inner-padding outer-padding radius)
   (let* ((face       (or face 'svg-tag-default-face))
          (foreground (face-attribute face :foreground))
          (background (face-attribute face :background))
-         (border     (plist-get (eval (face-attribute face :box)) :color))
-         ;; Line below doesn't work for unknown reason
-         ;; (stroke  (plist-get (eval (face-attribute face :box)) :line-width))
+         (border     (plist-get (face-attribute face :box) :color))
          (stroke     1)
+         ;; (stroke     (plist-get (face-attribute face :box) :line-width))
          (family     (face-attribute face :family))
          (weight     (face-attribute face :weight))
          (size       (/ (face-attribute face :height) 10))
