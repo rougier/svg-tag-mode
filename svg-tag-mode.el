@@ -34,7 +34,7 @@
 ;; 1. Replace :TODO: keyword with default face/padding/radius
 ;;
 ;;    (setq svg-tag-todo (svg-tag-make "TODO"))
-;;    (setq svg-tags
+;;    (setq svg-tag-tags
 ;;          '(("\\(:TODO:\\)" 1 `(face nil display ,svg-tag-todo))
 ;;    (svg-tag-mode)
 ;;
@@ -46,7 +46,7 @@
 ;;           :family "Roboto Mono" :weight light :height 120))
 ;;      "Face for note tag" :group nil)
 ;;    (setq svg-tag-todo (svg-tag-make "TODO" svg-tag-todo-face 1 1 3))
-;;    (setq svg-tags
+;;    (setq svg-tag-tags
 ;;          '(("\\(:TODO:\\)" 1 `(face nil display ,svg-tag-todo))
 ;;    (svg-tag-mode)
 ;;
@@ -54,7 +54,7 @@
 ;;
 ;;    (defun svg-tag-round (text)
 ;;      (svg-tag-make (substring text 1 -1) nil 1 1 12))
-;;    (setq svg-tags
+;;    (setq svg-tag-tags
 ;;          '(("\\(=[0-9a-zA-Z- ]+?=\\)" 1
 ;;             `(face nil display ,(svg-tag-round (match-string 0))))))
 ;;    (svg-tag-mode)
@@ -63,8 +63,8 @@
 (require 'svg)
 (eval-when-compile (require 'subr-x))
 
-(defvar svg-tags nil)
-(defvar svg-tags--active-tags nil)
+(defvar svg-tag-tags nil)
+(defvar svg-tag-tags--active nil)
 
 (defgroup svg-tag nil
   "Replace keywords with SVG rounded box labels"
@@ -158,17 +158,17 @@ This should be zero for most fonts but some fonts may need this."
 
 (defun svg-tag-mode-on ()
   (add-to-list 'font-lock-extra-managed-props 'display)
-  (when svg-tags--active-tags
-    (font-lock-remove-keywords nil svg-tags--active-tags))
-  (when svg-tags
+  (when svg-tag-tags--active
+    (font-lock-remove-keywords nil svg-tag-tags--active))
+  (when svg-tag-tags
     (font-lock-add-keywords nil svg-tags))
-  (setq svg-tags--active-tags (copy-sequence svg-tags))
+  (setq svg-tag-tags--active (copy-sequence svg-tag-tags))
   (message "SVG tag mode on"))
 
 (defun svg-tag-mode-off ()
-  (when svg-tags--active-tags
-    (font-lock-remove-keywords nil svg-tags--active-tags))
-  (setq svg-tags--active-tags nil)
+  (when svg-tag-tags--active
+    (font-lock-remove-keywords nil svg-tag-tags--active))
+  (setq svg-tag-tags--active nil)
   (message "SVG tag mode off"))
 
 (define-minor-mode svg-tag-mode
