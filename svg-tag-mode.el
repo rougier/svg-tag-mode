@@ -61,6 +61,7 @@
 ;;
 ;;; Code:
 (require 'svg)
+(eval-when-compile (require 'subr-x))
 
 (defvar svg-tags nil)
 (defvar active-svg-tags nil)
