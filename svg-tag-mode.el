@@ -184,7 +184,7 @@ This should be zero for most fonts but some fonts may need this."
   (when svg-tag-tags--active
     (font-lock-remove-keywords nil svg-tag-tags--active))
   (when svg-tag-tags
-    (font-lock-add-keywords nil svg-tags))
+    (font-lock-add-keywords nil svg-tag-tags))
   (setq svg-tag-tags--active (copy-sequence svg-tag-tags))
   (message "SVG tag mode on"))
 
