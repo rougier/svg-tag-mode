@@ -49,25 +49,23 @@
 
 (svg-tag-mode 1)
 
-;; A tag function using SVG to display a rounded box with outer and inner
-;; padding and a controllable box radius. The resulting SVG is perfectly
-;; aligned with regular text such that a |TAG| can be inserted and edited
-;; anywhere in the text thanks to font-lock and the display property.
-
-;;|:TODO:| Make a minor mode
-;;|:NOTE:| Don't know how to do it, help needed…
-;;|______| Perfect alignment with regular text
+;;
+;; :NOTE: SVG tag is a minor mode that displays a rounded box with outer
+;;        and inner padding and a controllable box radius. The resulting
+;;        SVG is perfectly aligned with regular text such that a |TAG|
+;;        can be inserted and edited anywhere in the text thanks to
+;;        font-lock and the display property.
+;; :TODO: Migrate to ELPA or MELPA
+;; 
+;; More examples:
+;; --------------
 ;;
 ;;  Save ................. |C-x|+|C-s|  Help ............... |C-h|
 ;;  Save as .............. |C-x|+|C-w|  Cancel ............. |C-g|
 ;;  Open a new file ...... |C-x|+|C-f|  Undo ............... |C-z|
 ;;  Open recent .......... |C-x|+|C-r|  Close buffer ....... |C-x|+|k|
 ;;  Browse directory ......|C-x|+|d|    Quit ............... |C-x|+|C-c|
-
-;; ------------------------------------------------------------------------
-;; :NOTE: Sections can be folded or unfolded. If you think a section has
-;;        disappeared, it's probably because it is folded. To unfold it,
-;;        place the cursor on the section title and press the |tab| key.
+;;
 ;; ------------------------------------------------------------------------
 ;; (1)(2)(3)(4)(5)(Z)(W)(12)(99)
 ;; ------------------------------------------------------------------------
