@@ -49,12 +49,11 @@
 
 (svg-tag-mode 1)
 
-;;
 ;; :NOTE: SVG tag is a minor mode that displays a rounded box with outer
-;;        and inner padding and a controllable box radius. The resulting
-;;        SVG is perfectly aligned with regular text such that a |TAG|
-;;        can be inserted and edited anywhere in the text thanks to
-;;        font-lock and the display property.
+;; and inner padding and a controllable box radius. The resulting SVG is
+;; perfectly aligned with regular text such that a |TAG| can be inserted
+;; and edited anywhere in the text.
+;;
 ;; :TODO: Migrate to ELPA or MELPA
 ;; 
 ;; More examples:
