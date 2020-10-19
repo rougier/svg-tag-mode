@@ -33,37 +33,22 @@
 ;;
 ;; 1. Replace :TODO: keyword with default face/padding/radius
 ;;
-;;    (setq svg-tag-todo (svg-tag-make "TODO"))
-;;    (setq svg-tag-tags
-;;          '(("\\(:TODO:\\)" 1 `(face nil display ,svg-tag-todo))
+;;    (setq svg-tag-tags '((":TODO:"  (svg-tag-make "TODO")))
 ;;    (svg-tag-mode)
 ;;
 ;;
-;; 2. Replace :TODO: keyword with specific face/padding/radius
-;;
-;;    (defface svg-tag-todo-face
-;;      '((t :foreground "black" :background "white" :box "black"
-;;           :family "Roboto Mono" :weight light :height 120))
-;;      "Face for note tag" :group nil)
-;;    (setq svg-tag-todo (svg-tag-make "TODO" svg-tag-todo-face 1 1 3))
-;;    (setq svg-tag-tags
-;;          '(("\\(:TODO:\\)" 1 `(face nil display ,svg-tag-todo))
-;;    (svg-tag-mode)
-;;
-;; 3. Replace any letter betwen @ with a circle
+;; 2. Replace any letter betwen @ with a circle
 ;;
 ;;    (defun svg-tag-round (text)
 ;;      (svg-tag-make (substring text 1 -1) nil 1 1 12))
-;;    (setq svg-tag-tags
-;;          '(("\\(=[0-9a-zA-Z- ]+?=\\)" 1
-;;             `(face nil display ,(svg-tag-round (match-string 0))))))
+;;    (setq svg-tag-tags '(("([0-9])" svg-tag-round)))
 ;;    (svg-tag-mode)
 ;;
 ;;; Code:
 (require 'svg)
 (eval-when-compile (require 'subr-x))
 
-(defvar svg-tag-tags nil)
+;; (defvar svg-tag-tags nil)
 (defvar svg-tag-tags--active nil)
 
 (defgroup svg-tag nil
@@ -113,19 +98,18 @@ This should be zero for most fonts but some fonts may need this."
   "Default face for tag"
   :group 'svg-tag)
 
-;; (defcustom svg-tag-tags
-;;   '((":TODO:" . (svg-tag-make "TODO")))
-;;   "An alist mapping keywords to tags used to display them.
+(defcustom svg-tag-tags
+  '((":TODO:" . (svg-tag-make "TODO")))
+  "An alist mapping keywords to tags used to display them.
 
-;; Each entry has the form (keyword . tag). Keyword is used as part
-;; of a regular expression and tag can be either a svg tag
-;; previously created by svg-tag-make or a function that takes a
-;; string as argument and returns a tag. When tag is a function, this
-;; allows to create dynamic tags."
-  
-;;   :group 'svg-tag-mode
-;;   :type '(repeat (cons (string :tag "Keyword")
-;;                        (sexp   :tag "Tag"))))
+Each entry has the form (keyword . tag). Keyword is used as part
+of a regular expression and tag can be either a svg tag
+previously created by svg-tag-make or a function that takes a
+string as argument and returns a tag. When tag is a function, this
+allows to create dynamic tags."
+  :group 'svg-tag
+  :type '(repeat (cons (string :tag "Keyword")
+                       (sexp   :tag "Tag"))))
 
 
 (defun svg-tag-make (text &optional face inner-padding outer-padding radius)
@@ -179,18 +163,31 @@ This should be zero for most fonts but some fonts may need this."
                    :y           (+ text-y svg-tag-vertical-offset))
     (svg-image svg :ascent 'center)))
 
+
+(defun tag-svg--build-keywords (item)
+  (let ((pattern  (format "\\(%s\\)" (car item)))
+        (tag      (cdr item)))
+    (when (and (symbolp tag) (fboundp tag))
+      (setq tag `(,tag (match-string 0))))
+    (setq tag  ``(face nil display ,,tag))
+    `(,pattern 1 ,tag)))
+
+
 (defun svg-tag-mode-on ()
   (add-to-list 'font-lock-extra-managed-props 'display)
   (when svg-tag-tags--active
-    (font-lock-remove-keywords nil svg-tag-tags--active))
+    (font-lock-remove-keywords nil
+          (mapcar 'tag-svg--build-keywords svg-tag-tags--active)))
   (when svg-tag-tags
-    (font-lock-add-keywords nil svg-tag-tags))
+    (font-lock-add-keywords nil
+                            (mapcar 'tag-svg--build-keywords svg-tag-tags)))
   (setq svg-tag-tags--active (copy-sequence svg-tag-tags))
   (message "SVG tag mode on"))
 
 (defun svg-tag-mode-off ()
   (when svg-tag-tags--active
-    (font-lock-remove-keywords nil svg-tag-tags--active))
+    (font-lock-remove-keywords nil
+               (mapcar 'tag-svg--build-keywords svg-tag-tags--active)))
   (setq svg-tag-tags--active nil)
   (message "SVG tag mode off"))
 
