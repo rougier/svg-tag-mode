@@ -72,7 +72,7 @@
   :group 'svg-tag)
 
 (defcustom svg-tag-default-line-width 1
-  "Default border line width  (in pixels, null or positive)"
+  "Default border line width  (in pixels, null or positive)."
   :type 'integer
   :group 'svg-tag)
 
@@ -102,10 +102,10 @@ This should be zero for most fonts but some fonts may need this."
   '((":TODO:" . (svg-tag-make "TODO")))
   "An alist mapping keywords to tags used to display them.
 
-Each entry has the form (keyword . tag). Keyword is used as part
+Each entry has the form (keyword . tag).  Keyword is used as part
 of a regular expression and tag can be either a svg tag
-previously created by svg-tag-make or a function that takes a
-string as argument and returns a tag. When tag is a function, this
+previously created by `svg-tag-make' or a function that takes a
+string as argument and returns a tag.  When tag is a function, this
 allows to create dynamic tags."
   :group 'svg-tag
   :type '(repeat (cons (string :tag "Keyword")
@@ -113,7 +113,8 @@ allows to create dynamic tags."
 
 
 (defun svg-tag-make (text &optional face inner-padding outer-padding radius)
-  "Create a SVG image displaying text in a rounded box"
+  "Create a SVG image displaying TEXT in a rounded box using FACE style.
+INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
   (let* ((face       (or face 'svg-tag-default-face))
          (foreground (face-attribute face :foreground))
          (background (face-attribute face :background))
@@ -155,7 +156,7 @@ allows to create dynamic tags."
                        (- tag-width line-width) (- tag-height line-width)
                    :fill        background
                    :rx          (- radius (/ line-width 2.0)))
-    (svg-text      svg text 
+    (svg-text      svg text
                    :font-family family
                    :font-weight weight
                    :font-size   size
@@ -166,7 +167,7 @@ allows to create dynamic tags."
 
 
 (defun tag-svg--build-keywords (item)
-  "Internal, build the list of keywords"
+  "Internal.  Build the list of keyword from ITEM."
   (let ((pattern  (format "\\(%s\\)" (car item)))
         (tag      (cdr item)))
     (when (and (symbolp tag) (fboundp tag))
@@ -175,7 +176,7 @@ allows to create dynamic tags."
     `(,pattern 1 ,tag)))
 
 (defun svg-tag-mode-on ()
-  "Activate SVG tag mode"
+  "Activate SVG tag mode."
   (add-to-list 'font-lock-extra-managed-props 'display)
   (when svg-tag-tags--active
     (font-lock-remove-keywords nil
@@ -187,7 +188,7 @@ allows to create dynamic tags."
   (message "SVG tag mode on"))
 
 (defun svg-tag-mode-off ()
-  "Deactivate SVG tag mode"
+  "Deactivate SVG tag mode."
   (when svg-tag-tags--active
     (font-lock-remove-keywords nil
                (mapcar 'tag-svg--build-keywords svg-tag-tags--active)))
