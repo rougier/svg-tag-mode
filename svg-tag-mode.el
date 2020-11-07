@@ -179,7 +179,7 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
     (svg-image svg :ascent 'center)))
 
 
-(defun tag-svg--build-keywords (item)
+(defun svg-tag--build-keywords (item)
   "Internal.  Build the list of keyword from ITEM."
   (let ((pattern  (format "\\(%s\\)" (car item)))
         (tag      (cdr item)))
@@ -193,10 +193,10 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
   (add-to-list 'font-lock-extra-managed-props 'display)
   (when svg-tag-tags--active
     (font-lock-remove-keywords nil
-          (mapcar 'tag-svg--build-keywords svg-tag-tags--active)))
+          (mapcar 'svg-tag--build-keywords svg-tag-tags--active)))
   (when svg-tag-tags
     (font-lock-add-keywords nil
-                            (mapcar 'tag-svg--build-keywords svg-tag-tags)))
+                            (mapcar 'svg-tag--build-keywords svg-tag-tags)))
   (setq svg-tag-tags--active (copy-sequence svg-tag-tags))
   (message "SVG tag mode on"))
 
@@ -204,7 +204,7 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
   "Deactivate SVG tag mode."
   (when svg-tag-tags--active
     (font-lock-remove-keywords nil
-               (mapcar 'tag-svg--build-keywords svg-tag-tags--active)))
+               (mapcar 'svg-tag--build-keywords svg-tag-tags--active)))
   (setq svg-tag-tags--active nil)
   (message "SVG tag mode off"))
 
