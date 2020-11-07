@@ -1,7 +1,7 @@
 ** SVG tag minor mode (Emacs)
 
 A small minor mode to replace keywords or regular expression with SVG rounded
-box labels. See [[file:/example.el][example.el]] for example usage.
+box labels. See [[file:example-1.el][example-1.el]] and [[file:example-2.el][example-2.el]] for example usage.
 
 *** Installation
 
@@ -13,7 +13,7 @@ box labels. See [[file:/example.el][example.el]] for example usage.
 
 *** Demonstration 
 
-Open [[file:/example.el][example.el]] and evaluate buffer (*M-x evaluate-buffer*)
+Open [[file:example-1.el][example-1.el]] and evaluate buffer (*M-x evaluate-buffer*)
 
 *SVG tag mode on*
 [[./svg-tag-on.png]]

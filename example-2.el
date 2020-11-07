@@ -31,7 +31,7 @@
   "Face for DONE  svg tag" :group nil)
 
 (defface svg-tag-date-face
-  '((t :foreground "white" :background "#B0BEC5" :box "#B0BEC5"
+  '((t :foreground "black" :background "#ECEFF1" :box "#ECEFF1"
        :family "Roboto Mono" :weight light :height 120))
   "Face for date svg tag" :group nil)
 
@@ -70,9 +70,15 @@
 
 (svg-tag-mode 1)
 
-;; To do:       TODO  NEXT  HOLD  DONE  
-;; Tags:       @MEETING:@NOTE:
+;; To do:      TODO  NEXT  HOLD  DONE  
+;; Tags:       :@MEETING:@NOTE:
 ;; Priorities: [#A] [#B] [#C]
 ;; Date:       <2020-11-07 Sat>
+
+;;  DONE Make a pull request on melpa                             <2020-11-07 Sat>
+;;  NEXT Wait for review
+;;  TODO Post on Reddit
+
+
 
 
