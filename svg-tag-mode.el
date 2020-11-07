@@ -37,7 +37,7 @@
 ;;    (svg-tag-mode)
 ;;
 ;;
-;; 2. Replace any letter betwen @ with a circle
+;; 2. Replace any letter between () with a circle
 ;;
 ;;    (defun svg-tag-round (text)
 ;;      (svg-tag-make (substring text 1 -1) nil 1 1 12))
@@ -113,6 +113,7 @@ allows to create dynamic tags."
 
 
 (defun svg-tag-make (text &optional face inner-padding outer-padding radius)
+  "Create a SVG image displaying text in a rounded box"
   (let* ((face       (or face 'svg-tag-default-face))
          (foreground (face-attribute face :foreground))
          (background (face-attribute face :background))
@@ -165,6 +166,7 @@ allows to create dynamic tags."
 
 
 (defun tag-svg--build-keywords (item)
+  "Internal, build the list of keywords"
   (let ((pattern  (format "\\(%s\\)" (car item)))
         (tag      (cdr item)))
     (when (and (symbolp tag) (fboundp tag))
@@ -172,8 +174,8 @@ allows to create dynamic tags."
     (setq tag  ``(face nil display ,,tag))
     `(,pattern 1 ,tag)))
 
-
 (defun svg-tag-mode-on ()
+  "Activate SVG tag mode"
   (add-to-list 'font-lock-extra-managed-props 'display)
   (when svg-tag-tags--active
     (font-lock-remove-keywords nil
@@ -185,6 +187,7 @@ allows to create dynamic tags."
   (message "SVG tag mode on"))
 
 (defun svg-tag-mode-off ()
+  "Deactivate SVG tag mode"
   (when svg-tag-tags--active
     (font-lock-remove-keywords nil
                (mapcar 'tag-svg--build-keywords svg-tag-tags--active)))
