@@ -198,7 +198,8 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
     (font-lock-add-keywords nil
                             (mapcar 'svg-tag--build-keywords svg-tag-tags)))
   (setq svg-tag-tags--active (copy-sequence svg-tag-tags))
-  (message "SVG tag mode on"))
+  (message "SVG tag mode on")
+  (font-lock-flush))
 
 (defun svg-tag-mode-off ()
   "Deactivate SVG tag mode."
@@ -206,13 +207,16 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
     (font-lock-remove-keywords nil
                (mapcar 'svg-tag--build-keywords svg-tag-tags--active)))
   (setq svg-tag-tags--active nil)
-  (message "SVG tag mode off"))
+  (message "SVG tag mode off")
+  (font-lock-flush))
 
 (define-minor-mode svg-tag-mode
   "Minor mode for graphical tag as rounded box."
   :group 'svg-tag
-  (if svg-tag-mode (svg-tag-mode-on) (svg-tag-mode-off))
-  (font-lock-flush))
+  (if svg-tag-mode (svg-tag-mode-on) (svg-tag-mode-off)))
+
+(define-globalized-minor-mode
+   global-svg-tag-mode svg-tag-mode svg-tag-mode-on)
 
 (provide 'svg-tag-mode)
 

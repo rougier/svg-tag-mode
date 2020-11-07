@@ -68,7 +68,7 @@
         ("<[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\} [A-Za-z]\\{3\\}>"
                                             . svg-tag-make-org-date)))
 
-(svg-tag-mode 1)
+(global-svg-tag-mode)
 
 ;; To do:      TODO  NEXT  HOLD  DONE  
 ;; Tags:       :@MEETING:@NOTE:
