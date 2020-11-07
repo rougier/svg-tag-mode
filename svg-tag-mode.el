@@ -5,6 +5,7 @@
 ;; Author: Nicolas P. Rougier <Nicolas.Rougier@inria.fr>
 ;; Homepage: https://github.com/rougier/svg-tag-mode
 ;; Keywords: convenience
+;; Version: 0.1
 
 ;; Package-Requires: ((emacs "26.1"))
 
