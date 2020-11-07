@@ -112,6 +112,16 @@ allows to create dynamic tags."
   :type '(repeat (cons (string :tag "Keyword")
                        (sexp   :tag "Tag"))))
 
+;; SVG font weights translation
+(setq svg-tag--font-weights '((thin       . 100)
+                              (ultralight . 200)
+                              (light      . 300)
+                              (regular    . 400)
+                              (medium     . 500)
+                              (semibold   . 600)
+                              (bold       . 700)
+                              (extrabold  . 800)
+                              (black      . 900)))
 
 (defun svg-tag-make (text &optional face inner-padding outer-padding radius)
   "Create a SVG image displaying TEXT in a rounded box using FACE style.
@@ -126,7 +136,9 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
          (line-width (or (plist-get (face-attribute face :box) :line-width)
                          svg-tag-default-line-width))
          (family     (face-attribute face :family))
-         (weight     (face-attribute face :weight))
+;;         (weight     (face-attribute face :weight))
+         (weight     (cdr (assoc (face-attribute face :weight)
+                                           svg-tag--font-weights)))
          (size       (/ (face-attribute face :height) 10))
 
          (tag-char-width  (window-font-width nil face))

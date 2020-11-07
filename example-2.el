@@ -17,17 +17,17 @@
 
 (defface svg-tag-todo-face
   '((t :foreground "#ffffff" :background "#FFAB91" :box "#FFAB91"
-       :family "Roboto Mono" :weight light :height 120))
+       :family "Roboto Mono" :weight regular :height 120))
   "Face for TODO  svg tag" :group nil)
 
 (defface svg-tag-next-face
   '((t :foreground "white" :background "#673AB7" :box "#673AB7"
-       :family "Roboto Mono" :weight light :height 120))
+       :family "Roboto Mono" :weight regular :height 120))
   "Face for NEXT svg tag" :group nil)
 
 (defface svg-tag-done-face
   '((t :foreground "white" :background "#B0BEC5" :box "#B0BEC5"
-       :family "Roboto Mono" :weight light :height 120))
+       :family "Roboto Mono" :weight regular :height 120))
   "Face for DONE  svg tag" :group nil)
 
 (defface svg-tag-date-face
@@ -37,7 +37,7 @@
 
 (defface svg-tag-org-face
   '((t :foreground "black" :background "white" :box "black"
-       :family "Roboto Mono" :weight light :height 120))
+       :family "Roboto Mono" :weight regular :height 120))
   "Default face for svg tag" :group nil)
 
 (setq radius 2)
@@ -75,10 +75,6 @@
 ;; Priorities: [#A] [#B] [#C]
 ;; Date:       <2020-11-07 Sat>
 
-;;  DONE Make a pull request on melpa                             <2020-11-07 Sat>
-;;  NEXT Wait for review
-;;  TODO Post on Reddit
-
-
-
-
+;; DONE Make a pull request on melpa                             <2020-11-07 Sat>
+;; NEXT Wait for review
+;; TODO Post on Reddit
