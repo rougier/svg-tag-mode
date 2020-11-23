@@ -95,7 +95,9 @@ This should be zero for most fonts but some fonts may need this."
        :box (:line-width 1 :color "#FFAB91" :style nil)
        :family ,(face-attribute 'default :family)
        :weight ,(face-attribute 'default :weight)
-       :height ,(- (face-attribute 'default :height) 20)))
+       :height ,(if (display-graphic-p)
+                    (- (face-attribute 'default :height) 20)
+                  1)))
   "Default face for tag"
   :group 'svg-tag)
 
