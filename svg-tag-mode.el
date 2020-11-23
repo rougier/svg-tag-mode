@@ -22,7 +22,7 @@
 ;; GNU General Public License for more details.
 
 ;; For a full copy of the GNU General Public License
-;; see <http://www.gnu.org/licenses/>.
+;; see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -91,8 +91,8 @@ This should be zero for most fonts but some fonts may need this."
 
 (defface svg-tag-default-face
   `((t :foreground "white"
-       :background "orange"
-       :box (:line-width 1 :color "orange" :style nil)
+       :background "#FFAB91"
+       :box (:line-width 1 :color "#FFAB91" :style nil)
        :family ,(face-attribute 'default :family)
        :weight ,(face-attribute 'default :weight)
        :height ,(- (face-attribute 'default :height) 20)))
@@ -100,7 +100,7 @@ This should be zero for most fonts but some fonts may need this."
   :group 'svg-tag)
 
 (defcustom svg-tag-tags
-  '((":TODO:" . (svg-tag-make "TODO")))
+  '((" TODO " . (svg-tag-make "TODO")))
   "An alist mapping keywords to tags used to display them.
 
 Each entry has the form (keyword . tag).  Keyword is used as part
@@ -129,7 +129,6 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
   (let* ((face       (or face 'svg-tag-default-face))
          (foreground (face-attribute face :foreground))
          (background (face-attribute face :background))
-         (box        (face-attribute face :box))
          (stroke     (or (plist-get (face-attribute face :box) :color)
                          foreground))
          ;; This does not seem to get the actual box line-width
@@ -190,13 +189,13 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
 
 (defun svg-tag-mode-on ()
   "Activate SVG tag mode."
-  (add-to-list 'font-lock-extra-managed-props 'display)
+  (add-to-list #'font-lock-extra-managed-props 'display)
   (when svg-tag-tags--active
     (font-lock-remove-keywords nil
-          (mapcar 'svg-tag--build-keywords svg-tag-tags--active)))
+          (mapcar #'svg-tag--build-keywords svg-tag-tags--active)))
   (when svg-tag-tags
     (font-lock-add-keywords nil
-                            (mapcar 'svg-tag--build-keywords svg-tag-tags)))
+                            (mapcar #'svg-tag--build-keywords svg-tag-tags)))
   (setq svg-tag-tags--active (copy-sequence svg-tag-tags))
   (message "SVG tag mode on")
   (font-lock-flush))
@@ -205,7 +204,7 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
   "Deactivate SVG tag mode."
   (when svg-tag-tags--active
     (font-lock-remove-keywords nil
-               (mapcar 'svg-tag--build-keywords svg-tag-tags--active)))
+               (mapcar #'svg-tag--build-keywords svg-tag-tags--active)))
   (setq svg-tag-tags--active nil)
   (message "SVG tag mode off")
   (font-lock-flush))
