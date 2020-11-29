@@ -191,7 +191,7 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
 
 (defun svg-tag-mode-on ()
   "Activate SVG tag mode."
-  (add-to-list #'font-lock-extra-managed-props 'display)
+  (add-to-list 'font-lock-extra-managed-props 'display)
   (when svg-tag-tags--active
     (font-lock-remove-keywords nil
           (mapcar #'svg-tag--build-keywords svg-tag-tags--active)))
