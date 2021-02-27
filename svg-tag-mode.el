@@ -177,7 +177,7 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
                    :fill        foreground
                    :x           (+ text-x svg-tag-horizontal-offset)
                    :y           (+ text-y svg-tag-vertical-offset))
-    (svg-image svg :ascent 'center)))
+    (svg-image svg :scale 1 :ascent 'center)))
 
 
 (defun svg-tag--build-keywords (item)
