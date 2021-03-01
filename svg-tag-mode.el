@@ -220,5 +220,7 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
    global-svg-tag-mode svg-tag-mode svg-tag-mode-on)
 
 (provide 'svg-tag-mode)
-
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:
 ;;; svg-tag-mode.el ends here
