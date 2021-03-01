@@ -45,7 +45,9 @@
 ;;    (setq svg-tag-tags '(("([0-9])" svg-tag-round)))
 ;;    (svg-tag-mode)
 ;;
+
 ;;; Code:
+
 (require 'svg)
 (eval-when-compile (require 'subr-x))
 
@@ -137,9 +139,9 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
          (line-width (or (plist-get (face-attribute face :box) :line-width)
                          svg-tag-default-line-width))
          (family     (face-attribute face :family))
-;;         (weight     (face-attribute face :weight))
+         ;; (weight     (face-attribute face :weight))
          (weight     (cdr (assoc (face-attribute face :weight)
-                                           svg-tag--font-weights)))
+                                 svg-tag--font-weights)))
          (size       (/ (face-attribute face :height) 10))
 
          (tag-char-width  (window-font-width nil face))
@@ -159,15 +161,18 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
          (tag-x (/ (- svg-width tag-width) 2))
          (text-x (+ tag-x (/ (- tag-width (* (length text) tag-char-width)) 2)))
          (text-y (- tag-char-height (- txt-char-height tag-char-height)))
-         
+
          (radius  (or radius svg-tag-default-radius))
          (svg (svg-create svg-width svg-height)))
-         
+
     (svg-rectangle svg tag-x 0 tag-width tag-height
                    :fill        stroke
                    :rx          radius)
-    (svg-rectangle svg (+ tag-x (/ line-width 2.0)) (/ line-width 2.0)
-                       (- tag-width line-width) (- tag-height line-width)
+    (svg-rectangle svg
+                   (+ tag-x (/ line-width 2.0))
+                   (/ line-width 2.0)
+                   (- tag-width line-width)
+                   (- tag-height line-width)
                    :fill        background
                    :rx          (- radius (/ line-width 2.0)))
     (svg-text      svg text
