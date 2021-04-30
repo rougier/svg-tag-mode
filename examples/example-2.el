@@ -17,62 +17,52 @@
 
 (defface svg-tag-org-face
   '((t :foreground "#333333" :background "white"
-       :box (:line-width 1 :color "black" :style nil)
-       :family "Roboto Mono" :weight regular :height 120))
+       :box (:line-width 1 :color "black" :style nil)))
   "Default face for svg tag" :group nil)
 
 (defface svg-tag-note-face
   '((t :foreground "#333333" :background "#FFFFFF"
-       :box (:line-width 1 :color "#333333" :style nil)
-       :family "Roboto Mono" :weight regular :height 120))
+       :box (:line-width 1 :color "#333333" :style nil)))
   "Default face for svg tag" :group nil)
 
 (defface svg-tag-todo-face
   '((t :foreground "#ffffff" :background "#FFAB91"
-       :box (:line-width 1 :color "#FFAB91" :style nil)
-       :family "Roboto Mono" :weight regular :height 120))
+       :box (:line-width 1 :color "#FFAB91" :style nil)))
   "Face for TODO  svg tag" :group nil)
 
 (defface svg-tag-next-face
   '((t :foreground "white" :background "#673AB7"
-       :box (:line-width 1 :color "#673AB7" :style nil)
-       :family "Roboto Mono" :weight regular :height 120))
+       :box (:line-width 1 :color "#673AB7" :style nil)))
   "Face for NEXT svg tag" :group nil)
 
 (defface svg-tag-done-face
   '((t :foreground "white" :background "#B0BEC5"
-       :box (:line-width 1 :color "#B0BEC5" :style nil)
-       :family "Roboto Mono" :weight regular :height 120))
+       :box (:line-width 1 :color "#B0BEC5" :style nil)))
   "Face for DONE  svg tag" :group nil)
 
 (defface svg-tag-org-tag-face
   '((t :foreground "#ffffff" :background "#FFAB91"
-       :box (:line-width 1 :color "#FFAB91" :style nil)
-       :family "Roboto Mono" :weight regular :height 120))
+       :box (:line-width 1 :color "#FFAB91" :style nil)))
   "Face for TODO  svg tag" :group nil)
 
 (defface svg-tag-date-active-face
   '((t :foreground "white" :background "#673AB7"
-       :box (:line-width 1 :color "#673AB7" :style nil)
-       :family "Roboto Mono" :weight regular :height 120))
+       :box (:line-width 1 :color "#673AB7" :style nil)))
   "Face for active date svg tag" :group nil)
 
 (defface svg-tag-time-active-face
   '((t :foreground "#673AB7" :background "#ffffff"
-       :box (:line-width 1 :color "#673AB7" :style nil)
-       :family "Roboto Mono" :weight light :height 120))
+       :box (:line-width 1 :color "#673AB7" :style nil)))
   "Face for active time svg tag" :group nil)
 
 (defface svg-tag-date-inactive-face
   '((t :foreground "#ffffff" :background "#B0BEC5"
-       :box (:line-width 1 :color "#B0BEC5" :style nil)
-       :family "Roboto Mono" :weight regular :height 120))
+       :box (:line-width 1 :color "#B0BEC5" :style nil)))
   "Face for inactive date svg tag" :group nil)
 
 (defface svg-tag-time-inactive-face
   '((t :foreground "#B0BEC5" :background "#ffffff"
-       :box (:line-width 2 :color "#B0BEC5" :style nil)
-       :family "Roboto Mono" :weight light :height 120))
+       :box (:line-width 2 :color "#B0BEC5" :style nil)))
   "Face for inactive time svg tag" :group nil)
 
 (setq svg-tag-org-todo (svg-tag-make "TODO" 'svg-tag-todo-face 1 1 2))

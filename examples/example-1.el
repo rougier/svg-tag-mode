@@ -16,21 +16,18 @@
 (require 'svg-tag-mode)
 
 (defface svg-tag-note-face
-  '((t :foreground "black" :background "white" :box "black"
-       :family "Roboto Mono" :weight light :height 120))
+  '((t :foreground "black" :background "white" :box "black"))
   "Face for note tag" :group nil)
 
 (defface svg-tag-keyboard-face
-  '((t :foreground "#333333" :background "#f9f9f9" :box "#333333"
-       :family "Roboto Mono" :weight light :height 120))
+  '((t :foreground "#333333" :background "#f9f9f9" :box "#333333"))
   "Face for keyboard bindings tag" :group nil)
 
 (defface svg-tag-org-face
-  '((t :foreground "#333333" :background "#fffff0" :box "#333333"
-       :family "Roboto Mono" :weight light :height 120))
+  '((t :foreground "#333333" :background "#fffff0" :box "#333333"))
   "Face for keyboard bindings tag" :group nil)
 
-(setq svg-tag-todo (svg-tag-make "TODO" nil 1 1 2))
+(setq svg-tag-todo (svg-tag-make "TODO" 'svg-tag-org-face 1 1 2))
 
 (setq svg-tag-note (svg-tag-make "NOTE" 'svg-tag-note-face 2 0 2))
 
