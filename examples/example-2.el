@@ -140,3 +140,7 @@
 ;;                [2020-11-07 Sat]
 ;;                [2020-11-07 Sat 14:00]
 ;;                [2020-11-07 Sat 14:00-15:00]
+
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:
