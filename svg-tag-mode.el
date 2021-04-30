@@ -198,11 +198,11 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
   "Activate SVG tag mode."
   (add-to-list 'font-lock-extra-managed-props 'display)
   (when svg-tag-tags--active
-    (font-lock-remove-keywords nil
-          (mapcar #'svg-tag--build-keywords svg-tag-tags--active)))
+    (font-lock-remove-keywords
+     nil (mapcar #'svg-tag--build-keywords svg-tag-tags--active)))
   (when svg-tag-tags
-    (font-lock-add-keywords nil
-                            (mapcar #'svg-tag--build-keywords svg-tag-tags)))
+    (font-lock-add-keywords
+     nil (mapcar #'svg-tag--build-keywords svg-tag-tags)))
   (setq svg-tag-tags--active (copy-sequence svg-tag-tags))
   (message "SVG tag mode on")
   (font-lock-flush))
@@ -210,8 +210,8 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
 (defun svg-tag-mode-off ()
   "Deactivate SVG tag mode."
   (when svg-tag-tags--active
-    (font-lock-remove-keywords nil
-               (mapcar #'svg-tag--build-keywords svg-tag-tags--active)))
+    (font-lock-remove-keywords
+     nil (mapcar #'svg-tag--build-keywords svg-tag-tags--active)))
   (setq svg-tag-tags--active nil)
   (message "SVG tag mode off")
   (font-lock-flush))
@@ -221,8 +221,8 @@ INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
   :group 'svg-tag
   (if svg-tag-mode (svg-tag-mode-on) (svg-tag-mode-off)))
 
-(define-globalized-minor-mode
-   global-svg-tag-mode svg-tag-mode svg-tag-mode-on)
+(define-globalized-minor-mode global-svg-tag-mode svg-tag-mode
+  svg-tag-mode-on)
 
 (provide 'svg-tag-mode)
 ;; Local Variables:

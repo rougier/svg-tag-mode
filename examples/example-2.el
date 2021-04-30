@@ -116,19 +116,19 @@
         (" NEXT "                           . svg-tag-org-next)
         (" HOLD "                           . svg-tag-org-hold)
 
-        (,(concat "<" date-re  "[ >]")             . svg-tag-make-org-date-active)    
-        (,(concat "<" date-re " " day-re "[ >]")   . svg-tag-make-org-date-active)    
+        (,(concat "<" date-re  "[ >]")             . svg-tag-make-org-date-active)
+        (,(concat "<" date-re " " day-re "[ >]")   . svg-tag-make-org-date-active)
         (,(concat time-re ">")                     . svg-tag-make-org-time-active)
         (,(concat time-re "-" time-re ">")         . svg-tag-make-org-range-active)
 
-        (,(concat "\\[" date-re  "[] ]")           . svg-tag-make-org-date-inactive)    
-        (,(concat "\\[" date-re " " day-re "[] ]") . svg-tag-make-org-date-inactive)    
+        (,(concat "\\[" date-re  "[] ]")           . svg-tag-make-org-date-inactive)
+        (,(concat "\\[" date-re " " day-re "[] ]") . svg-tag-make-org-date-inactive)
         (,(concat time-re "\\]")                   . svg-tag-make-org-time-inactive)
         (,(concat time-re "-" time-re "\\]")       . svg-tag-make-org-range-inactive)))
 
 (svg-tag-mode)
 
-;; To do:       TODO  NEXT  HOLD  DONE  
+;; To do:       TODO  NEXT  HOLD  DONE
 ;; Tags:       @MEETING:@NOTE:
 ;; Priorities:  [#A] [#B] [#C]
 ;; Active date:   <2020-11-07>

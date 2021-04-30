@@ -30,11 +30,9 @@
        :family "Roboto Mono" :weight light :height 120))
   "Face for keyboard bindings tag" :group nil)
 
-(setq svg-tag-todo
-  (svg-tag-make "TODO" nil 1 1 2))
+(setq svg-tag-todo (svg-tag-make "TODO" nil 1 1 2))
 
-(setq svg-tag-note
-  (svg-tag-make "NOTE" 'svg-tag-note-face 2 0 2))
+(setq svg-tag-note (svg-tag-make "NOTE" 'svg-tag-note-face 2 0 2))
 
 (defun svg-tag-round (text)
   (svg-tag-make (substring text 1 -1) 'svg-tag-note-face 1 1 12))
@@ -64,7 +62,7 @@
 ;; and edited anywhere in the text.
 ;;
 ;; :TODO: Migrate to ELPA or MELPA
-;; 
+;;
 ;; More examples:
 ;; --------------
 ;;
