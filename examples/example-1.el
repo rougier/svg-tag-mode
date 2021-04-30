@@ -16,25 +16,24 @@
 (require 'svg-tag-mode)
 
 (defface svg-tag-note-face
-  '((t :foreground "black" :background "white" :box "black"
-       :family "Roboto Mono" :weight light :height 120))
+  '((t :foreground "black" :background "white" :box "black"))
   "Face for note tag" :group nil)
 
 (defface svg-tag-keyboard-face
-  '((t :foreground "#333333" :background "#f9f9f9" :box "#333333"
-       :family "Roboto Mono" :weight light :height 120))
+  '((t :foreground "#333333" :background "#f9f9f9" :box "#333333"))
+  "Face for keyboard bindings tag" :group nil)
+
+(defface svg-tag-todo-face
+  '((t :foreground "#333333" :background "#ff8800"))
   "Face for keyboard bindings tag" :group nil)
 
 (defface svg-tag-org-face
-  '((t :foreground "#333333" :background "#fffff0" :box "#333333"
-       :family "Roboto Mono" :weight light :height 120))
+  '((t :foreground "#333333" :background "#fffff0" :box "#333333"))
   "Face for keyboard bindings tag" :group nil)
 
-(setq svg-tag-todo
-  (svg-tag-make "TODO" nil 1 1 2))
+(setq svg-tag-todo (svg-tag-make "TODO" 'svg-tag-todo-face 1 1 6))
 
-(setq svg-tag-note
-  (svg-tag-make "NOTE" 'svg-tag-note-face 2 0 2))
+(setq svg-tag-note (svg-tag-make "NOTE" 'svg-tag-note-face 2 0 4))
 
 (defun svg-tag-round (text)
   (svg-tag-make (substring text 1 -1) 'svg-tag-note-face 1 1 12))
@@ -43,7 +42,7 @@
   (svg-tag-make (substring text 1 -1) 'svg-tag-note-face 1 1 8))
 
 (defun svg-tag-keyboard (text)
-  (svg-tag-make (substring text 1 -1) 'svg-tag-keyboard-face 1 1 2))
+  (svg-tag-make (substring text 1 -1) 'svg-tag-keyboard-face 1 1 6))
 
 (defun svg-tag-org (text)
   (svg-tag-make (substring text 1 -1) 'svg-tag-org-face 1 1 2))
@@ -64,7 +63,7 @@
 ;; and edited anywhere in the text.
 ;;
 ;; :TODO: Migrate to ELPA or MELPA
-;; 
+;;
 ;; More examples:
 ;; --------------
 ;;
@@ -78,3 +77,6 @@
 ;; (1)(2)(3)(4)(5)(Z)(W)(12)(99)
 ;; ------------------------------------------------------------------------
 
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:
