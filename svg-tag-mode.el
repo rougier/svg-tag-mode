@@ -74,23 +74,6 @@
   :type 'integer
   :group 'svg-tag)
 
-(defcustom svg-tag-default-line-width 1
-  "Default border line width  (in pixels, null or positive)."
-  :type 'integer
-  :group 'svg-tag)
-
-(defcustom svg-tag-vertical-offset 0
-  "Vertical offset for text (in pixels).
-This should be zero for most fonts but some fonts may need this."
-  :type 'integer
-  :group 'svg-tag)
-
-(defcustom svg-tag-horizontal-offset 0
-  "Horizontal offset for text (in pixels).
-This should be zero for most fonts but some fonts may need this."
-  :type 'integer
-  :group 'svg-tag)
-
 (defface svg-tag-default-face
   `((t :foreground "white"
        :background "#FFAB91"
@@ -134,59 +117,58 @@ allows to create dynamic tags."
 (defun svg-tag-make (text &optional face inner-padding outer-padding radius)
   "Create a SVG image displaying TEXT in a rounded box using FACE style.
 INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
-  (let* ((face       (or face 'svg-tag-default-face))
-         (foreground (face-attribute face :foreground))
-         (background (face-attribute face :background))
-         (stroke     (or (plist-get (face-attribute face :box) :color)
-                         foreground))
-         ;; This does not seem to get the actual box line-width
-         (line-width (or (plist-get (face-attribute face :box) :line-width)
-                         svg-tag-default-line-width))
-         (family     (face-attribute face :family))
-         ;; (weight     (face-attribute face :weight))
-         (weight     (svg-tag--font-weight face))
-         (size       (/ (face-attribute face :height) 10))
+  (svg-tag--make
+   (string-trim text)
+   (or face 'svg-tag-default-face)
+   (or inner-padding svg-tag-default-inner-padding)
+   (or outer-padding svg-tag-default-outer-padding)
+   (or radius svg-tag-default-radius)))
 
-         (tag-char-width  (window-font-width nil face))
-         (tag-char-height (window-font-height nil face))
-         (txt-char-width  (window-font-width))
-         (txt-char-height (window-font-height))
-         (inner-padding   (or inner-padding svg-tag-default-inner-padding))
-         (outer-padding   (or outer-padding svg-tag-default-outer-padding))
-
-         (text (string-trim text))
-         (tag-width (* (+ (length text) inner-padding) txt-char-width))
-         (tag-height (* txt-char-height 0.9))
-
-         (svg-width (+ tag-width (* outer-padding txt-char-width)))
-         (svg-height tag-height)
-
-         (tag-x (/ (- svg-width tag-width) 2))
-         (text-x (+ tag-x (/ (- tag-width (* (length text) tag-char-width)) 2)))
-         (text-y (- tag-char-height (- txt-char-height tag-char-height)))
-
-         (radius  (or radius svg-tag-default-radius))
-         (svg (svg-create svg-width svg-height)))
-
+(defun svg-tag--make (text face padding margin radius)
+  (let* ((foreground  (face-attribute face :foreground nil t))
+         (background  (face-attribute face :background nil t))
+         (box         (face-attribute face :box nil t))
+         (box         (if (eq box 'unspecified) nil box))
+         (box-color   (or (plist-get box :color) foreground))
+         (box-width   (/ (or (plist-get box :line-width) 1) 2.0))
+         (font-family (face-attribute face :family nil 'default))
+         (font-weight (alist-get (face-attribute face :weight nil 'default)
+                                 svg-tag--font-weights))
+         (txt-width   (window-font-width))
+         (svg-width   (* txt-width (+ (length text) padding margin)))
+         (tag-width   (* txt-width (+ (length text) padding)))
+         (tag-x       (* txt-width (/ margin 2.0)))
+         (text-x      (+ tag-x
+                         (/ (- tag-width (* (length text) txt-width))
+                            2)))
+         (font-size   (* (ceiling
+                          (* (face-attribute face :height nil 'default)
+                             0.1))
+                         (image-compute-scaling-factor 'auto)))
+         (txt-height  (window-font-height))
+         (svg-height  txt-height)
+         (tag-height  (- txt-height 2))
+         (text-y      font-size)
+         (svg         (svg-create svg-width svg-height)))
     (svg-rectangle svg tag-x 0 tag-width tag-height
-                   :fill        stroke
-                   :rx          radius)
-    (svg-rectangle svg
-                   (+ tag-x (/ line-width 2.0))
-                   (/ line-width 2.0)
-                   (- tag-width line-width)
-                   (- tag-height line-width)
-                   :fill        background
-                   :rx          (- radius (/ line-width 2.0)))
-    (svg-text      svg text
-                   :font-family family
-                   :font-weight weight
-                   :font-size   size
-                   :fill        foreground
-                   :x           (+ text-x svg-tag-horizontal-offset)
-                   :y           (+ text-y svg-tag-vertical-offset))
+                   :fill (if box box-color background)
+                   :rx   radius)
+    (when box
+      (svg-rectangle svg
+                     (+ tag-x         box-width)
+                     (+ 0             box-width)
+                     (- tag-width  (* box-width 2))
+                     (- tag-height (* box-width 2))
+                     :fill background
+                     :rx   (- radius box-width)))
+    (svg-text svg text
+              :font-family font-family
+              :font-weight font-weight
+              :font-size   font-size
+              :fill        foreground
+              :x           text-x
+              :y           text-y)
     (svg-image svg :scale 1 :ascent 'center)))
-
 
 (defun svg-tag--build-keywords (item)
   "Internal.  Build the list of keyword from ITEM."
