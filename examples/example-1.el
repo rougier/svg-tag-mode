@@ -27,9 +27,9 @@
   '((t :foreground "#333333" :background "#fffff0" :box "#333333"))
   "Face for keyboard bindings tag" :group nil)
 
-(setq svg-tag-todo (svg-tag-make "TODO" 'svg-tag-org-face 1 1 2))
+(setq svg-tag-todo (svg-tag-make "TODO" 'svg-tag-org-face 1 1 6))
 
-(setq svg-tag-note (svg-tag-make "NOTE" 'svg-tag-note-face 2 0 2))
+(setq svg-tag-note (svg-tag-make "NOTE" 'svg-tag-note-face 2 0 4))
 
 (defun svg-tag-round (text)
   (svg-tag-make (substring text 1 -1) 'svg-tag-note-face 1 1 12))
@@ -38,7 +38,7 @@
   (svg-tag-make (substring text 1 -1) 'svg-tag-note-face 1 1 8))
 
 (defun svg-tag-keyboard (text)
-  (svg-tag-make (substring text 1 -1) 'svg-tag-keyboard-face 1 1 2))
+  (svg-tag-make (substring text 1 -1) 'svg-tag-keyboard-face 1 1 6))
 
 (defun svg-tag-org (text)
   (svg-tag-make (substring text 1 -1) 'svg-tag-org-face 1 1 2))
