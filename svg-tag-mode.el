@@ -109,6 +109,7 @@
 ;; Version 0.1:
 ;; - Proof of concept
 ;;
+
 ;;; Code:
 (require 'svg-lib)
 
@@ -274,5 +275,7 @@ allows to create dynamic tags."
    global-svg-tag-mode svg-tag-mode svg-tag-mode-on)
 
 (provide 'svg-tag-mode)
-
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:
 ;;; svg-tag-mode.el ends here
