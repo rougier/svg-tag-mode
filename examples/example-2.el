@@ -51,8 +51,7 @@
              (svg-tag-make tag :beg 1 :inverse nil :crop-right t :margin 0 :face 'org-date))))
          (,(format "\\[%s *\\(%s\\]\\)" date-re time-re) .
           ((lambda (tag)
-             (svg-tag-make tag :end -1 :inverse t :crop-left t :margin 0 :face 'org-date))))
-        ))
+             (svg-tag-make tag :end -1 :inverse t :crop-left t :margin 0 :face 'org-date))))))
 
 (svg-tag-mode t)
 
