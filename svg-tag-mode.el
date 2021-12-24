@@ -1,13 +1,13 @@
 ;;; svg-tag-mode.el --- Replace keywords with SVG tags -*- lexical-binding: t -*-
 
-;; Copyright (C) 2020 Nicolas P. Rougier
+;; Copyright (C) 2020,2021 Nicolas P. Rougier
 
 ;; Author: Nicolas P. Rougier <Nicolas.Rougier@inria.fr>
 ;; Homepage: https://github.com/rougier/svg-tag-mode
 ;; Keywords: convenience
-;; Version: 0.1
+;; Version: 0.2
 
-;; Package-Requires: ((emacs "26.1"))
+;; Package-Requires: ((emacs "27.1" svg-lib "0.3"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -26,83 +26,104 @@
 
 ;;; Commentary:
 
-;; This minor mode replaces keywords or expressions with SVG rounded
-;; box labels that are fully customizable.
+;; This minor mode replaces keywords or expressions with SVG tags
+;; that are fully customizable and clickable.
 ;;
 ;; Usage example:
 ;; --------------
 ;;
-;; 1. Replace :TODO: keyword with default face/padding/radius
+;; (setq svg-tag-tags '((":TODO:"  ((svg-tag-make "TODO") nil nil))))
 ;;
-;;    (setq svg-tag-tags '((":TODO:"  (svg-tag-make "TODO")))
-;;    (svg-tag-mode)
+;; Each item has the form '(KEYWORD (TAG COMMAND HELP)) where:
+;;  - KEYWORD is a regular expression including a matched group of 
+;;    the form "\\(xxx\\)". If this is not the case the whole
+;;    string will be used a the matched group.
+;;  - TAG is either a SVG image that will be displayed using the
+;;    'display property or a function that accepts a unique string
+;;    argument (match-string 1) and returns an SVG image.
+;;  - COMMAND is a command to be executed when user clicks on the tag.
+;;    It can be nil if no command is associated with the tag.
+;;  - HELP is a string to be displayed when mouse pointer is over
+;;    the tag. It can be nil if no command is associated with the tag.
 ;;
 ;;
-;; 2. Replace any letter between () with a circle
+;; Examples:
+;; ---------
 ;;
-;;    (defun svg-tag-round (text)
-;;      (svg-tag-make (substring text 1 -1) nil 1 1 12))
-;;    (setq svg-tag-tags '(("([0-9])" svg-tag-round)))
-;;    (svg-tag-mode)
+;; ;; This replaces any occurence of ":TODO:" with a static SVG tag
+;; ;; displaying "TODO"
+;; (setq svg-tag-tags
+;;       '((":TODO:" . ((svg-tag-make "TODO")))))
+;;
+;; ;; This replaces any occurence of ":HELLO:" with a static SVG tag that
+;; ;; can be clicked to execute the specified command. Help message is
+;; ;; displayed when the tag is hovered with the pointer.
+;; (setq svg-tag-tags
+;;       '((":HELLO:" .  ((svg-tag-make "HELLO")
+;;                        (lambda () (interactive) (message "Hello world!"))
+;;                        "Print a greeting message"))))
+;;
+;; ;; This replaces any occurence of ":TODO:" with a static SVG tag
+;; ;; displaying ":TODO:"
+;; (setq svg-tag-tags
+;;       '((":TODO:" . (svg-tag-make))))
+;;
+;; ;; This replaces any occurence of ":TODO:" with a dynamic SVG tag
+;; ;; displaying "TODO"
+;; (setq svg-tag-tags
+;;       '((":TODO:" . ((lambda (tag)
+;;                        (svg-tag-make tag :beg 1 :end -1))))))
+;;
+;; ;; This replaces any occurence of ":XXX:" with a dynamic SVG tag
+;; ;; displaying "XXX"
+;; (setq svg-tag-tags
+;;       '(("\\(:[A-Z]+:\\)" . ((lambda (tag)
+;;                                (svg-tag-make tag :beg 1 :end -1))))))
+;;
+;; ;; This replaces any occurence of ":XXX|YYY:" with two adjacent
+;; ;; dynamic SVG tags displaying "XXX" and "YYY"
+;; (setq svg-tag-tags
+;;       '(("\\(:[A-Z]+\\)\|[a-zA-Z#0-9]+:" . ((lambda (tag)
+;;                                            (svg-tag-make tag :beg 1 :inverse t
+;;                                                           :margin 0 :crop-right t))))
+;;         (":[A-Z]+\\(\|[a-zA-Z#0-9]+:\\)" . ((lambda (tag)
+;;                                            (svg-tag-make tag :beg 1 :end -1
+;;                                                          :margin 0 :crop-left t))))))
+;;
+;; ;; This replaces any occurence of ":#TAG1:#TAG2:…:$" ($ means end of
+;; ;; line) with a dynamic collection of SVG tags. Note the # symbol in
+;; ;; front of tags. This is mandatory because Emacs cannot do regex look
+;; ;; ahead.
+;; (setq svg-tag-tags
+;;       '(("\\(:#[A-Za-z0-9]+\\)" . ((lambda (tag)
+;;                                      (svg-tag-make tag :beg 2))))
+;;         ("\\(:#[A-Za-z0-9]+:\\)$" . ((lambda (tag)
+;;                                        (svg-tag-make tag :beg 2 :end -1))))))
+;;
+;;; NEWS:
+;;
+;; Version 0.2:
+;; - Added activable tags
+;; - svg-lib dependency
+;;
+;; Version 0.1:
+;; - Proof of concept
 ;;
 ;;; Code:
-(require 'svg)
-(eval-when-compile (require 'subr-x))
+(require 'svg-lib)
 
-;; (defvar svg-tag-tags nil)
-(defvar svg-tag-tags--active nil)
+(defvar svg-tag--active-tags nil
+  "Set of currently active tags")
 
 (defgroup svg-tag nil
   "Replace keywords with SVG rounded box labels"
   :group 'convenience
   :prefix "svg-tag-")
 
-(defcustom svg-tag-default-outer-padding 1
-  "Default outer padding (in characters, null or positive)."
-  :type 'integer
-  :group 'svg-tag)
-
-(defcustom svg-tag-default-inner-padding 1
-  "Default inner padding (in characters, null or positive)."
-  :type 'integer
-  :group 'svg-tag)
-
-(defcustom svg-tag-default-radius 3
-  "Default radius  (in pixels, null or positive)."
-  :type 'integer
-  :group 'svg-tag)
-
-(defcustom svg-tag-default-line-width 1
-  "Default border line width  (in pixels, null or positive)."
-  :type 'integer
-  :group 'svg-tag)
-
-(defcustom svg-tag-vertical-offset 0
-  "Vertical offset for text (in pixels).
-This should be zero for most fonts but some fonts may need this."
-  :type 'integer
-  :group 'svg-tag)
-
-(defcustom svg-tag-horizontal-offset 0
-  "Horizontal offset for text (in pixels).
-This should be zero for most fonts but some fonts may need this."
-  :type 'integer
-  :group 'svg-tag)
-
-(defface svg-tag-default-face
-  `((t :foreground "white"
-       :background "#FFAB91"
-       :box (:line-width 1 :color "#FFAB91" :style nil)
-       :family ,(face-attribute 'default :family)
-       :weight ,(face-attribute 'default :weight)
-       :height ,(if (display-graphic-p)
-                    (- (face-attribute 'default :height) 20)
-                  1)))
-  "Default face for tag"
-  :group 'svg-tag)
+(setq svg-tag-tags `((" TODO " . ((svg-tag-make "TODO") nil nil))))
 
 (defcustom svg-tag-tags
-  '((" TODO " . (svg-tag-make "TODO")))
+  `((" TODO " . ((svg-tag-make "TODO") nil nil)))
   "An alist mapping keywords to tags used to display them.
 
 Each entry has the form (keyword . tag).  Keyword is used as part
@@ -112,109 +133,142 @@ string as argument and returns a tag.  When tag is a function, this
 allows to create dynamic tags."
   :group 'svg-tag
   :type '(repeat (cons (string :tag "Keyword")
-                       (sexp   :tag "Tag"))))
+                       (list (sexp     :tag "Tag")
+                             (sexp     :tag "Command")
+                             (sexp     :tag "Help")))))
 
-;; SVG font weights translation
-(defvar svg-tag--font-weights '((thin       . 100)
-                                (ultralight . 200)
-                                (light      . 300)
-                                (regular    . 400)
-                                (medium     . 500)
-                                (semibold   . 600)
-                                (bold       . 700)
-                                (extrabold  . 800)
-                                (black      . 900)))
+(defun svg-tag-make (tag &optional &rest args)
+  "Return a svg tag displaying TAG and using specified ARGS.
+   
+  ARGS are passed to the `svg-lib-tag' function but there are
+  supplementary arguments:
 
-(defun svg-tag-make (text &optional face inner-padding outer-padding radius)
-  "Create a SVG image displaying TEXT in a rounded box using FACE style.
-INNER-PADDING, OUTER-PADDING and RADIUS controls the visual aspect of the box."
-  (let* ((face       (or face 'svg-tag-default-face))
-         (foreground (face-attribute face :foreground))
-         (background (face-attribute face :background))
-         (stroke     (or (plist-get (face-attribute face :box) :color)
-                         foreground))
-         ;; This does not seem to get the actual box line-width
-         (line-width (or (plist-get (face-attribute face :box) :line-width)
-                         svg-tag-default-line-width))
-         (family     (face-attribute face :family))
-;;         (weight     (face-attribute face :weight))
-         (weight     (cdr (assoc (face-attribute face :weight)
-                                           svg-tag--font-weights)))
-         (size       (/ (face-attribute face :height) 10))
+  :beg (integer) specifies the first index of the tag substring to
+                 take into account (default 0)
 
-         (tag-char-width  (window-font-width nil face))
-         (tag-char-height (window-font-height nil face))
-         (txt-char-width  (window-font-width))
-         (txt-char-height (window-font-height))
-         (inner-padding   (or inner-padding svg-tag-default-inner-padding))
-         (outer-padding   (or outer-padding svg-tag-default-outer-padding))
+  :end (integer) specifies the last index of the tag substring to
+                 take into account (default nil)
 
-         (text (string-trim text))
-         (tag-width (* (+ (length text) inner-padding) txt-char-width))
-         (tag-height (* txt-char-height 0.9))
+  :face (face) indicates the face to use to compute foreground &
+               background color (default 'default)
 
-         (svg-width (+ tag-width (* outer-padding txt-char-width)))
-         (svg-height tag-height)
+  :inverse (bool) indicates whether to inverse foreground &
+                  background color (default nil)
 
-         (tag-x (/ (- svg-width tag-width) 2))
-         (text-x (+ tag-x (/ (- tag-width (* (length text) tag-char-width)) 2)))
-         (text-y (- tag-char-height (- txt-char-height tag-char-height)))
-         
-         (radius  (or radius svg-tag-default-radius))
-         (svg (svg-create svg-width svg-height)))
-         
-    (svg-rectangle svg tag-x 0 tag-width tag-height
-                   :fill        stroke
-                   :rx          radius)
-    (svg-rectangle svg (+ tag-x (/ line-width 2.0)) (/ line-width 2.0)
-                       (- tag-width line-width) (- tag-height line-width)
-                   :fill        background
-                   :rx          (- radius (/ line-width 2.0)))
-    (svg-text      svg text
-                   :font-family family
-                   :font-weight weight
-                   :font-size   size
-                   :fill        foreground
-                   :x           (+ text-x svg-tag-horizontal-offset)
-                   :y           (+ text-y svg-tag-vertical-offset))
-    (svg-image svg :scale 1 :ascent 'center)))
-
+   Note that :foreground, :background, :stroke and :font-weight
+   cannot be specified because thay are overwritten by the
+   function. If you need full control of tag appearance, best is
+   to call svg-lib-tag directly."
+  
+  (let* ((face (or (plist-get args :face) 'default))
+         (inverse (or (plist-get args :inverse) nil))
+         (beg (or (plist-get args :beg) 0))
+         (end (or (plist-get args :end) nil))
+         (args (org-plist-delete args 'stroke))
+         (args (org-plist-delete args 'foreground))
+         (args (org-plist-delete args 'background))
+         (args (org-plist-delete args 'font-weight)))
+    (if inverse
+        (apply #'svg-lib-tag (substring tag beg end) nil
+               :stroke 0
+               :font-weight 'semibold
+               :foreground (face-background face nil 'default)
+               :background (face-foreground face nil 'default)
+               args)
+      (apply #'svg-lib-tag (substring tag beg end) nil
+                   :stroke 2
+                   :font-weight 'regular
+                   :foreground (face-foreground face nil 'default)
+                   :background (face-background face nil 'default)
+                   args))))
 
 (defun svg-tag--build-keywords (item)
-  "Internal.  Build the list of keyword from ITEM."
-  (let ((pattern  (format "\\(%s\\)" (car item)))
-        (tag      (cdr item)))
-    (when (and (symbolp tag) (fboundp tag))
-      (setq tag `(,tag (match-string 0))))
-    (setq tag  ``(face nil display ,,tag))
+  "Process an item in order to install it as a new keyword."
+    
+  (let* ((pattern  (if (string-match "\\\\(.+\\\\)" (car item))
+                       (car item)
+                     (format "\\(%s\\)" (car item))))
+         (tag      (nth 0 (cdr item)))
+         (callback (nth 1 (cdr item)))
+         (help     (nth 2 (cdr item))))
+    (when (or (functionp tag) (and (symbolp tag) (fboundp tag)))
+      (setq tag `(,tag (match-string 1))))
+    (setq tag ``(face nil
+                 display ,,tag
+                 ,@(if ,callback '(pointer hand))
+                 ,@(if ,help `(help-echo ,,help))
+                 ,@(if ,callback `(keymap (keymap (mouse-1  . ,,callback))))))
     `(,pattern 1 ,tag)))
+
+(defun svg-tag--remove-text-properties (oldfun start end props  &rest args)
+  "This applies remove-text-properties with 'display removed from props"
+  (apply oldfun start end (org-plist-delete props 'display) args))
+
+(defun svg-tag--remove-text-properties-on (args)
+  "This installs an advice around remove-text-properties"
+  (advice-add 'remove-text-properties
+              :around #'svg-tag--remove-text-properties))
+
+(defun svg-tag--remove-text-properties-off (args)
+  "This removes the advice around remove-text-properties"
+  (advice-remove 'remove-text-properties
+                 #'svg-tag--remove-text-properties))
 
 (defun svg-tag-mode-on ()
   "Activate SVG tag mode."
   (add-to-list 'font-lock-extra-managed-props 'display)
-  (when svg-tag-tags--active
+
+  ;; Remove currently active tags
+  (when svg-tag--active-tags
     (font-lock-remove-keywords nil
-          (mapcar #'svg-tag--build-keywords svg-tag-tags--active)))
+          (mapcar #'svg-tag--build-keywords svg-tag--active-tags)))
+
+  ;; Install tags
   (when svg-tag-tags
     (font-lock-add-keywords nil
-                            (mapcar #'svg-tag--build-keywords svg-tag-tags)))
-  (setq svg-tag-tags--active (copy-sequence svg-tag-tags))
+          (mapcar #'svg-tag--build-keywords svg-tag-tags)))
+
+  ;; Make a copy of newly installed tags
+  (setq svg-tag--active-tags (copy-sequence svg-tag-tags))
+
+  ;; Install advices on remove-text-properties (before & after). This
+  ;; is a hack to prevent org mode from removing SVG tags that use the
+  ;; 'display property
+  (advice-add 'org-fontify-meta-lines-and-blocks
+            :before #'notebook--remove-text-properties-on)
+  (advice-add 'org-fontify-meta-lines-and-blocks
+              :after #'notebook--remove-text-properties-off)
+
+  ;; Redisplay everything to show tags
   (message "SVG tag mode on")
   (font-lock-flush))
 
 (defun svg-tag-mode-off ()
   "Deactivate SVG tag mode."
-  (when svg-tag-tags--active
+
+  ;; Remove currently active tags
+  (when svg-tag--active-tags
     (font-lock-remove-keywords nil
-               (mapcar #'svg-tag--build-keywords svg-tag-tags--active)))
-  (setq svg-tag-tags--active nil)
+          (mapcar #'svg-tag--build-keywords svg-tag--active-tags)))
+  (setq svg-tag--active-tags nil)
+
+  ;; Remove advices on remove-text-properties (before & after)
+  (advice-remove 'org-fontify-meta-lines-and-blocks
+                 #'svg-tag--remove-text-properties-on)
+  (advice-remove 'org-fontify-meta-lines-and-blocks
+                 #'svg-tag--remove-text-properties-off)
+  (remove-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
+  
+  ;; Redisplay everything to hide tags
   (message "SVG tag mode off")
   (font-lock-flush))
 
 (define-minor-mode svg-tag-mode
   "Minor mode for graphical tag as rounded box."
   :group 'svg-tag
-  (if svg-tag-mode (svg-tag-mode-on) (svg-tag-mode-off)))
+  (if svg-tag-mode
+      (svg-tag-mode-on)
+    (svg-tag-mode-off)))
 
 (define-globalized-minor-mode
    global-svg-tag-mode svg-tag-mode svg-tag-mode-on)
