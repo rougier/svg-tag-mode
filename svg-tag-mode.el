@@ -163,6 +163,7 @@ allows to create dynamic tags."
   
   (let* ((face (or (plist-get args :face) 'default))
          (inverse (or (plist-get args :inverse) nil))
+         (tag (string-trim tag))
          (beg (or (plist-get args :beg) 0))
          (end (or (plist-get args :end) nil))
          (args (org-plist-delete args 'stroke))
