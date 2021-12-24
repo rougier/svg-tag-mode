@@ -15,48 +15,16 @@
 ;; see <http://www.gnu.org/licenses/>.
 (require 'svg-tag-mode)
 
-(defface svg-tag-note-face
-  '((t :foreground "black" :background "white" :box "black"
-       :family "Roboto Mono" :weight light :height 120))
-  "Face for note tag" :group nil)
-
-(defface svg-tag-keyboard-face
-  '((t :foreground "#333333" :background "#f9f9f9" :box "#333333"
-       :family "Roboto Mono" :weight light :height 120))
-  "Face for keyboard bindings tag" :group nil)
-
-(defface svg-tag-org-face
-  '((t :foreground "#333333" :background "#fffff0" :box "#333333"
-       :family "Roboto Mono" :weight light :height 120))
-  "Face for keyboard bindings tag" :group nil)
-
-(setq svg-tag-todo
-  (svg-tag-make "TODO" nil 1 1 2))
-
-(setq svg-tag-note
-  (svg-tag-make "NOTE" 'svg-tag-note-face 2 0 2))
-
-(defun svg-tag-round (text)
-  (svg-tag-make (substring text 1 -1) 'svg-tag-note-face 1 1 12))
-
-(defun svg-tag-quasi-round (text)
-  (svg-tag-make (substring text 1 -1) 'svg-tag-note-face 1 1 8))
-
-(defun svg-tag-keyboard (text)
-  (svg-tag-make (substring text 1 -1) 'svg-tag-keyboard-face 1 1 2))
-
-(defun svg-tag-org (text)
-  (svg-tag-make (substring text 1 -1) 'svg-tag-org-face 1 1 2))
-
 (setq svg-tag-tags
-      '(("@[0-9a-zA-Z]+:"                   . svg-tag-org)
-        (":TODO:"                           . svg-tag-todo)
-        (":NOTE:"                           . svg-tag-note)
-        ("\([0-9a-zA-Z]\)"                  . svg-tag-round)
-        ("\([0-9a-zA-Z][0-9a-zA-Z]\)"       . svg-tag-quasi-round)
-        ("|[0-9a-zA-Z- ⇥></%⌘^→←↑↓]+?|"    . svg-tag-keyboard)))
-
-(svg-tag-mode 1)
+      '((":TODO:" . ((svg-tag-make "TODO" :face 'org-tag :inverse t :margin 0)))
+        (":NOTE:" . ((svg-tag-make "NOTE" :margin 0)))
+        ("\([0-9a-zA-Z]\)" . ((lambda (tag)
+                                (svg-tag-make tag :beg 1 :end -1 :radius 12))))
+        ("\([0-9a-zA-Z][0-9a-zA-Z]\)" . ((lambda (tag)
+                                           (svg-tag-make tag :beg 1 :end -1 :radius 8))))
+        ("|[0-9a-zA-Z- ]+?|" . ((lambda (tag)
+                                  (svg-tag-make tag :beg 1 :end -1))))))
+(svg-tag-mode t)
 
 ;; :NOTE: SVG tag is a minor mode that displays a rounded box with outer
 ;; and inner padding and a controllable box radius. The resulting SVG is
@@ -75,6 +43,6 @@
 ;;  Browse directory ......|C-x||d|    Quit ............... |C-x||C-c|
 ;;
 ;; ------------------------------------------------------------------------
-;; (1)(2)(3)(4)(5)(Z)(W)(12)(99)
+;; (1)(2)(3)(4)(5)(Z)(W)(12)(99) (A)(B)(C)
 ;; ------------------------------------------------------------------------
 
