@@ -5,6 +5,8 @@ A minor mode to replace keywords or regular expression with SVG tags.
 
 ![](images/svg-tag-mode.png)
 
+![](images/org-mode.png)
+
 
 ### Usage example
 
