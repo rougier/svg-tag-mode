@@ -1,13 +1,13 @@
 ;;; svg-tag-mode.el --- Replace keywords with SVG tags -*- lexical-binding: t -*-
 
-;; Copyright (C) 2020,2021 Nicolas P. Rougier
+;; Copyright (C) 2020, 2021 Nicolas P. Rougier
 
 ;; Author: Nicolas P. Rougier <Nicolas.Rougier@inria.fr>
 ;; Homepage: https://github.com/rougier/svg-tag-mode
 ;; Keywords: convenience
 ;; Version: 0.2
 
-;; Package-Requires: ((emacs "27.1" svg-lib "0.3"))
+;; Package-Requires: ((emacs "27.1") (svg-lib "0.3"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -27,7 +27,7 @@
 ;;; Commentary:
 
 ;; This minor mode replaces keywords or expressions with SVG tags
-;; that are fully customizable and clickable.
+;; that are fully customizable and activable.
 ;;
 ;; Usage example:
 ;; --------------
