@@ -5,7 +5,7 @@
 ;; Author: Nicolas P. Rougier <Nicolas.Rougier@inria.fr>
 ;; Homepage: https://github.com/rougier/svg-tag-mode
 ;; Keywords: convenience
-;; Version: 0.2
+;; Version: 0.3
 
 ;; Package-Requires: ((emacs "27.1") (svg-lib "0.3"))
 
@@ -63,7 +63,7 @@
 ;;                        (lambda () (interactive) (message "Hello world!"))
 ;;                        "Print a greeting message"))))
 ;;
-;; ;; This replaces any occurence of ":TODO:" with a static SVG tag
+;; ;; This replaces any occurence of ":TODO:" with a dynamic SVG tag
 ;; ;; displaying ":TODO:"
 ;; (setq svg-tag-tags
 ;;       '((":TODO:" . (svg-tag-make))))
@@ -101,6 +101,9 @@
 ;;                                        (svg-tag-make tag :beg 2 :end -1))))))
 ;;
 ;;; NEWS:
+;;
+;; Version 0.3:
+;; - Tags are now editable when cursor is inside.
 ;;
 ;; Version 0.2:
 ;; - Added activable tags
@@ -185,8 +188,8 @@ allows to create dynamic tags."
                    args))))
 
 (defun svg-tag--cursor-function (win position direction)
-  "This function hides the tag when cursor is over it. This
-allows to edit the tag."
+  "This function hides the tag when cursor is over it, allowing
+ to edit it."
   (let ((beg (if (eq direction 'entered)
                  (previous-property-change (+ (point) 1))
                (previous-property-change (+ position 1))))
@@ -202,7 +205,6 @@ allows to edit the tag."
     ;;                      (substring-no-properties
     ;;                       (buffer-substring beg end )))))
       ))
-
 
 (defun svg-tag--build-keywords (item)
   "Process an item in order to install it as a new keyword."
