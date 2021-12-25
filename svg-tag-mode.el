@@ -187,17 +187,21 @@ allows to create dynamic tags."
 (defun svg-tag--cursor-function (win position direction)
   "This function hides the tag when cursor is over it. This
 allows to edit the tag."
-  (let* ((extents (cond ((and (eq direction 'left) (< (point) position))
-                         `(,position . ,(next-property-change position)))
-                        ((and (eq direction 'left) (> (point) position)) 
-                         `(,(previous-property-change position) . ,(point)))
-                        ((and (eq direction 'entered) (> (point) position))
-                         `(,(point) . ,(next-property-change (point))))
-                        ((and (eq direction 'entered) (< (point) position))
-                         `(,(previous-property-change (point)) . ,position)))))
+  (let ((beg (if (eq direction 'entered)
+                 (previous-property-change (+ (point) 1))
+               (previous-property-change (+ position 1))))
+        (end (if (eq direction 'entered)
+                 (next-property-change (point))
+               (next-property-change position))))
     (if (eq direction 'left)
-        (font-lock-flush (car extents) (cdr extents))
-      (font-lock-unfontify-region (car extents) (cdr extents)))))
+        (font-lock-flush beg end )
+      (font-lock-unfontify-region beg end))
+
+    ;; (if (eq direction 'entered)
+    ;;     (message (concat "TAG: "
+    ;;                      (substring-no-properties
+    ;;                       (buffer-substring beg end )))))
+      ))
 
 
 (defun svg-tag--build-keywords (item)
