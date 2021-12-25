@@ -1,4 +1,4 @@
-;; Copyright (C) 2020  Nicolas P. Rougier
+;; Copyright (C) 2020, 2021  Nicolas P. Rougier
 ;; This file is not part of GNU Emacs.
 ;;
 ;; This file is free software; you can redistribute it and/or modify
