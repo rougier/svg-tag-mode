@@ -3,9 +3,9 @@
 
 A minor mode to replace keywords or regular expression with SVG tags.
 
-![](images/svg-tag-mode.png)
+[![](images/example-1.png)](examples/example-1.el)
 
-![](images/org-mode.png)
+[![](images/example-2.png)](examples/example-2.el)
 
 
 ### Usage example
