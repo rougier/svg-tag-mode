@@ -46,7 +46,7 @@ then you can invoke mode with `M-x svg-tag-mode`. Here are some examples:
 ```
 
 
-3. Replace any occurence of `:TODO:` with a static SVG tag displaying
+3. Replace any occurence of `:TODO:` with a dynamic SVG tag displaying
    `:TODO:`
 
 ```lisp
