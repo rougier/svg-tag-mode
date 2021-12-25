@@ -14,7 +14,7 @@ You need first to set `svg-tag-tags` that is a list of item here each
 item has the form `(KEYWORD (TAG COMMAND HELP))` where:
 
 - **KEYWORD** is a regular expression including a matched group of 
-  the form "\\(xxx\\)". If this is not the case the whole
+  the form `\\(xxx\\)`. If this is not the case the whole
   string will be used a the matched group.
 - **TAG** is either a SVG image that will be displayed using the
   'display property or a function that accepts a unique string
