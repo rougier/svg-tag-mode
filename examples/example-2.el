@@ -39,6 +39,9 @@
         ("DONE" . ((svg-tag-make "DONE" :face 'org-done :margin 0)))
 
         ;; Org date (without day name)
+        (,(format "\\(<%s>\\)" date-re) .
+         ((lambda (tag)
+            (svg-tag-make tag :beg 1 :end -1 :margin 0))))
         (,(format "\\(<%s *\\)%s>" date-re time-re) .
          ((lambda (tag)
             (svg-tag-make tag :beg 1 :inverse nil :crop-right t :margin 0))))
@@ -46,6 +49,9 @@
          ((lambda (tag)
             (svg-tag-make tag :end -1 :inverse t :crop-left t :margin 0))))
 
+         (,(format "\\(\\[%s\\]\\)" date-re) .
+          ((lambda (tag)
+             (svg-tag-make tag :beg 1 :end -1 :margin 0 :face 'org-date))))
          (,(format "\\(\\[%s *\\)%s\\]" date-re time-re) .
           ((lambda (tag)
              (svg-tag-make tag :beg 1 :inverse nil :crop-right t :margin 0 :face 'org-date))))
@@ -58,5 +64,7 @@
 ;; To do:         TODO DONE  
 ;; Tags:          :#MEETING:#NOTE:
 ;; Priorities:    [#A] [#B] [#C]
-;; Active date:   <2021-12-24 14:00>
-;; Inactive date: [2021-12-24 14:00]
+;; Active date:   <2021-12-24>
+;;                <2021-12-24 14:00>
+;; Inactive date: [2021-12-24]
+;;                [2021-12-24 14:00]
