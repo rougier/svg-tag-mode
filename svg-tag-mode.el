@@ -184,6 +184,22 @@ allows to create dynamic tags."
                    :background (face-background face nil 'default)
                    args))))
 
+(defun svg-tag--cursor-function (win position direction)
+  "This function hides the tag when cursor is over it. This
+allows to edit the tag."
+  (let* ((extents (cond ((and (eq direction 'left) (< (point) position))
+                         `(,position . ,(next-property-change position)))
+                        ((and (eq direction 'left) (> (point) position)) 
+                         `(,(previous-property-change position) . ,(point)))
+                        ((and (eq direction 'entered) (> (point) position))
+                         `(,(point) . ,(next-property-change (point))))
+                        ((and (eq direction 'entered) (< (point) position))
+                         `(,(previous-property-change (point)) . ,position)))))
+    (if (eq direction 'left)
+        (font-lock-flush (car extents) (cdr extents))
+      (font-lock-unfontify-region (car extents) (cdr extents)))))
+
+
 (defun svg-tag--build-keywords (item)
   "Process an item in order to install it as a new keyword."
     
@@ -197,6 +213,7 @@ allows to create dynamic tags."
       (setq tag `(,tag (match-string 1))))
     (setq tag ``(face nil
                  display ,,tag
+                 cursor-sensor-functions ,'(svg-tag--cursor-function)
                  ,@(if ,callback '(pointer hand))
                  ,@(if ,help `(help-echo ,,help))
                  ,@(if ,callback `(keymap (keymap (mouse-1  . ,,callback))))))
@@ -237,12 +254,13 @@ allows to create dynamic tags."
   ;; is a hack to prevent org mode from removing SVG tags that use the
   ;; 'display property
   (advice-add 'org-fontify-meta-lines-and-blocks
-            :before #'notebook--remove-text-properties-on)
+            :before #'svg-tag--remove-text-properties-on)
   (advice-add 'org-fontify-meta-lines-and-blocks
-              :after #'notebook--remove-text-properties-off)
+              :after #'svg-tag--remove-text-properties-off)
 
   ;; Redisplay everything to show tags
   (message "SVG tag mode on")
+  (cursor-sensor-mode 1)
   (font-lock-flush))
 
 (defun svg-tag-mode-off ()
@@ -263,6 +281,7 @@ allows to create dynamic tags."
   
   ;; Redisplay everything to hide tags
   (message "SVG tag mode off")
+  (cursor-sensor-mode -1)
   (font-lock-flush))
 
 (define-minor-mode svg-tag-mode
