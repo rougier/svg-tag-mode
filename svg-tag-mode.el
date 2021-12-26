@@ -198,8 +198,8 @@ allows to create dynamic tags."
                (next-property-change position))))
     (if (eq direction 'left)
         (font-lock-flush beg end )
-      (font-lock-unfontify-region beg end))
-
+      (if (and (not view-read-only) (not buffer-read-only))
+          (font-lock-unfontify-region beg end)))
     ;; (if (eq direction 'entered)
     ;;     (message (concat "TAG: "
     ;;                      (substring-no-properties
@@ -264,6 +264,10 @@ allows to create dynamic tags."
   (advice-add 'org-fontify-meta-lines-and-blocks
               :after #'svg-tag--remove-text-properties-off)
 
+  ;; Flush buffer when entering read-only
+  (add-hook 'read-only-mode-hook
+            #'(lambda () (font-lock-flush (point-min) (point-max))))
+  
   ;; Redisplay everything to show tags
   (message "SVG tag mode on")
   (cursor-sensor-mode 1)

@@ -16,14 +16,17 @@
 (require 'svg-tag-mode)
 
 (setq svg-tag-tags
-      '((":TODO:" . ((svg-tag-make "TODO" :face 'org-tag :inverse t :margin 0)))
-        (":NOTE:" . ((svg-tag-make "NOTE" :margin 0)))
+      '((":TODO:" . ((svg-tag-make "TODO" :face 'org-tag
+                                   :radius 0 :inverse t :margin 0)))
+        (":NOTE:" . ((svg-tag-make "NOTE" :face 'font-lock-comment-face
+                                   :inverse nil :margin 0 :radius 0)))
         ("\([0-9a-zA-Z]\)" . ((lambda (tag)
                                 (svg-tag-make tag :beg 1 :end -1 :radius 12))))
         ("\([0-9a-zA-Z][0-9a-zA-Z]\)" . ((lambda (tag)
                                            (svg-tag-make tag :beg 1 :end -1 :radius 8))))
         ("|[0-9a-zA-Z- ]+?|" . ((lambda (tag)
-                                  (svg-tag-make tag :margin 0 :beg 1 :end -1))))))
+                                  (svg-tag-make tag :face 'font-lock-comment-face
+                                                :margin 0 :beg 1 :end -1))))))
 (svg-tag-mode t)
 
 ;; :NOTE: SVG tag is a minor mode that displays a rounded box with outer
@@ -40,7 +43,7 @@
 ;;  Save as .............. |C-x| |C-w|  Cancel ............. |C-g|
 ;;  Open a new file ...... |C-x| |C-f|  Undo ............... |C-z|
 ;;  Open recent .......... |C-x| |C-r|  Close buffer ....... |C-x| |k|
-;;  Browse directory ......|C-x| |d|    Quit ............... |C-x| |C-c|
+;;  Browse directory ..... |C-x| |d|    Quit ............... |C-x| |C-c|
 ;;
 ;; ------------------------------------------------------------------------
 ;; (1)(2)(3)(4)(5)(Z)(W)(12)(99) (A)(B)(C)
