@@ -124,10 +124,16 @@
   :group 'convenience
   :prefix "svg-tag-")
 
-(setq svg-tag-tags `((" TODO " . ((svg-tag-make "TODO") nil nil))))
+(defcustom svg-tag-action-at-point 'echo
+  "Action to be executed when the cursor enter a tag area"
+  :type '(radio (const :tag "Edit tag"  edit)
+                (const :tag "Echo tag"  echo)
+                (const :tag "No action" nil))
+  :group 'svg-tag)
+
 
 (defcustom svg-tag-tags
-  `((" TODO " . ((svg-tag-make "TODO") nil nil)))
+  `(("^TODO" . ((svg-tag-make "TODO") nil nil)))
   "An alist mapping keywords to tags used to display them.
 
 Each entry has the form (keyword . tag).  Keyword is used as part
@@ -196,15 +202,20 @@ allows to create dynamic tags."
         (end (if (eq direction 'entered)
                  (next-property-change (point))
                (next-property-change position))))
-    (if (eq direction 'left)
-        (font-lock-flush beg end )
-      (if (and (not view-read-only) (not buffer-read-only))
-          (font-lock-unfontify-region beg end)))
-    ;; (if (eq direction 'entered)
-    ;;     (message (concat "TAG: "
-    ;;                      (substring-no-properties
-    ;;                       (buffer-substring beg end )))))
-      ))
+
+    (if (eq svg-tag-action-at-point 'edit)
+        (if (eq direction 'left)
+            (font-lock-flush beg end )
+          (if (and (not view-read-only) (not buffer-read-only))
+              (font-lock-unfontify-region beg end))))
+    
+    (if (eq svg-tag-action-at-point 'echo)
+        (if (eq direction 'entered)
+            (let ((message-log-max nil))
+              (message (concat "TAG: "
+                               (substring-no-properties
+                                (string-trim
+                                 (buffer-substring beg end ))))))))))
 
 (defun svg-tag--build-keywords (item)
   "Process an item in order to install it as a new keyword."
