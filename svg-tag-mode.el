@@ -131,6 +131,15 @@
                 (const :tag "No action" nil))
   :group 'svg-tag)
 
+(defun svg-tags---plist-delete (plist property)
+  "Delete PROPERTY from PLIST.
+This is in contrast to merely setting it to 0."
+  (let (p)
+    (while plist
+      (if (not (eq property (car plist)))
+	  (setq p (plist-put p (car plist) (nth 1 plist))))
+      (setq plist (cddr plist)))
+    p))
 
 (defcustom svg-tag-tags
   `(("^TODO" . ((svg-tag-make "TODO") nil nil)))
@@ -175,10 +184,10 @@ allows to create dynamic tags."
          (tag (string-trim tag))
          (beg (or (plist-get args :beg) 0))
          (end (or (plist-get args :end) nil))
-         (args (org-plist-delete args 'stroke))
-         (args (org-plist-delete args 'foreground))
-         (args (org-plist-delete args 'background))
-         (args (org-plist-delete args 'font-weight)))
+         (args (svg-tag--plist-delete args 'stroke))
+         (args (svg-tag--plist-delete args 'foreground))
+         (args (svg-tag--delete args 'background))
+         (args (svg-tag--plist-delete args 'font-weight)))
     (if inverse
         (apply #'svg-lib-tag (substring tag beg end) nil
                :stroke 0
@@ -238,7 +247,7 @@ allows to create dynamic tags."
 
 (defun svg-tag--remove-text-properties (oldfun start end props  &rest args)
   "This applies remove-text-properties with 'display removed from props"
-  (apply oldfun start end (org-plist-delete props 'display) args))
+  (apply oldfun start end (svg-tag--plist-delete props 'display) args))
 
 (defun svg-tag--remove-text-properties-on (args)
   "This installs an advice around remove-text-properties"
