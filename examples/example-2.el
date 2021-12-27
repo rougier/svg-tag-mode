@@ -39,13 +39,14 @@
 (setq svg-tag-tags
       `(
         ;; Org tags
-        ("\\(:#[A-Za-z0-9]+\\)" . ((lambda (tag)
-                                     (svg-tag-make tag :face 'org-tag
-                                                   :beg 2 :alignment 0))))
-        ("\\(:#[A-Za-z0-9]+:\\)$" . ((lambda (tag)
-                                       (svg-tag-make tag :face 'org-tag
-                                                     :beg 2 :end -1
-                                                     :alignment 0))))
+        ("\\(:[A-Za-z0-9]+\\)" . ((lambda (tag)
+                              (svg-tag-make (string-trim tag ":+" ":+")
+                                            :margin 1 :alignment 0))))
+        ("\\(:[A-Za-z0-9]+:+\\)" . ((lambda (tag)
+                               (svg-tag-make (string-trim tag ":+" ":+")
+                                            :margin 1 :alignment 0))))
+        ("\\(:[A-Za-z0-9]+[ \-]\\)" . ((lambda (tag) tag)))
+        
         ;; Task priority
         ("\\[#[A-Z]\\]" . ( (lambda (tag)
                               (svg-tag-make tag :face 'org-priority 
@@ -86,7 +87,7 @@
 (svg-tag-mode t)
 
 ;; To do:         TODO DONE  
-;; Tags:          :#MEETING:#NOTE:
+;; Tags:          :MEETING:NOTE:
 ;; Priorities:    [#A] [#B] [#C]
 ;; Progress:      [1/3]
 ;;                [42%]
