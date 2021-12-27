@@ -131,7 +131,7 @@
                 (const :tag "No action" nil))
   :group 'svg-tag)
 
-(defun svg-tags---plist-delete (plist property)
+(defun svg-tag--plist-delete (plist property)
   "Delete PROPERTY from PLIST.
 This is in contrast to merely setting it to 0."
   (let (p)
@@ -186,7 +186,7 @@ allows to create dynamic tags."
          (end (or (plist-get args :end) nil))
          (args (svg-tag--plist-delete args 'stroke))
          (args (svg-tag--plist-delete args 'foreground))
-         (args (svg-tag--delete args 'background))
+         (args (svg-tag--plist-delete args 'background))
          (args (svg-tag--plist-delete args 'font-weight)))
     (if inverse
         (apply #'svg-lib-tag (substring tag beg end) nil
@@ -240,6 +240,7 @@ allows to create dynamic tags."
     (setq tag ``(face nil
                  display ,,tag
                  cursor-sensor-functions ,'(svg-tag--cursor-function)
+                 cursor-sensor-functions (svg-tag--cursor-function)
                  ,@(if ,callback '(pointer hand))
                  ,@(if ,help `(help-echo ,,help))
                  ,@(if ,callback `(keymap (keymap (mouse-1  . ,,callback))))))
