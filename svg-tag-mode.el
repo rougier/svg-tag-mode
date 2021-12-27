@@ -202,9 +202,11 @@ allows to create dynamic tags."
                    :background (face-background face nil 'default)
                    args))))
 
-(defun svg-tag--cursor-function (win position direction)
-  "This function hides the tag when cursor is over it, allowing
- to edit it."
+(defun svg-tag--cursor-function (_win position direction)
+  "This function processes action at point. Action can be:
+- Display the textual tag in the echo area
+- Dispaly the textual tag inline (this allow to edit it
+- Do nothing"
   (let ((beg (if (eq direction 'entered)
                  (previous-property-change (+ (point) 1))
                (previous-property-change (+ position 1))))
@@ -239,27 +241,28 @@ allows to create dynamic tags."
       (setq tag `(,tag (match-string 1))))
     (setq tag ``(face nil
                  display ,,tag
-                 cursor-sensor-functions ,'(svg-tag--cursor-function)
                  cursor-sensor-functions (svg-tag--cursor-function)
                  ,@(if ,callback '(pointer hand))
                  ,@(if ,help `(help-echo ,,help))
+                 ;; FIXME: Don't hard-code the internal representation
+                 ;; of keymaps.
                  ,@(if ,callback `(keymap (keymap (mouse-1  . ,,callback))))))
     `(,pattern 1 ,tag)))
 
-(defun svg-tag--remove-text-properties (oldfun start end props  &rest args)
+(defun svg-tag--remove-text-properties (oldfun start end props &rest args)
   "This applies remove-text-properties with 'display removed from props"
   (apply oldfun start end (svg-tag--plist-delete props 'display) args))
 
-(defun svg-tag--remove-text-properties-on (args)
-  "This installs an advice around remove-text-properties"
-  (advice-add 'remove-text-properties
-              :around #'svg-tag--remove-text-properties))
-
-(defun svg-tag--remove-text-properties-off (args)
-  "This removes the advice around remove-text-properties"
-  (advice-remove 'remove-text-properties
-                 #'svg-tag--remove-text-properties))
-
+(defun svg-tag--org-fontify-meta-lines-and-blocks (oldfun &rest args)
+  "This installs our hack on remove-text-properties."
+  (unwind-protect
+      (progn
+        (advice-add 'remove-text-properties
+                    :around #'svg-tag--remove-text-properties)
+        (apply oldfun args))
+    (advice-remove 'remove-text-properties
+                     #'svg-tag--remove-text-properties)))
+    
 (defun svg-tag-mode-on ()
   "Activate SVG tag mode."
   (add-to-list 'font-lock-extra-managed-props 'display)
@@ -277,13 +280,11 @@ allows to create dynamic tags."
   ;; Make a copy of newly installed tags
   (setq svg-tag--active-tags (copy-sequence svg-tag-tags))
 
-  ;; Install advices on remove-text-properties (before & after). This
-  ;; is a hack to prevent org mode from removing SVG tags that use the
-  ;; 'display property
+  ;; Install an advice on org-fontify that will install a local advice
+  ;; on remove-text-properties. This is a hack to prevent org mode
+  ;; from removing SVG tags that use the 'display property
   (advice-add 'org-fontify-meta-lines-and-blocks
-            :before #'svg-tag--remove-text-properties-on)
-  (advice-add 'org-fontify-meta-lines-and-blocks
-              :after #'svg-tag--remove-text-properties-off)
+              :around #'svg-tag--org-fontify-meta-lines-and-blocks)
 
   ;; Flush buffer when entering read-only
   (add-hook 'read-only-mode-hook
@@ -303,13 +304,10 @@ allows to create dynamic tags."
           (mapcar #'svg-tag--build-keywords svg-tag--active-tags)))
   (setq svg-tag--active-tags nil)
 
-  ;; Remove advices on remove-text-properties (before & after)
+  ;; Remove advices on org-fontify-meta-lines-and-blocks
   (advice-remove 'org-fontify-meta-lines-and-blocks
-                 #'svg-tag--remove-text-properties-on)
-  (advice-remove 'org-fontify-meta-lines-and-blocks
-                 #'svg-tag--remove-text-properties-off)
-  (remove-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
-  
+                 #'svg-tag--org-fontify-meta-lines-and-blocks)
+
   ;; Redisplay everything to hide tags
   (message "SVG tag mode off")
   (cursor-sensor-mode -1)
