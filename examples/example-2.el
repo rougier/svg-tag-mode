@@ -40,13 +40,8 @@
 (setq svg-tag-tags
       `(
         ;; Org tags
-        ("\\(:[A-Za-z0-9]+\\)" . ((lambda (tag)
-                              (svg-tag-make (string-trim tag ":+" ":+")
-                                            :margin 1 :alignment 0))))
-        ("\\(:[A-Za-z0-9]+:+\\)" . ((lambda (tag)
-                               (svg-tag-make (string-trim tag ":+" ":+")
-                                            :margin 1 :alignment 0))))
-        ("\\(:[A-Za-z0-9]+[ \-]\\)" . ((lambda (tag) tag)))
+        (":\\([A-Za-z0-9]+\\)" . ((lambda (tag) (svg-tag-make tag))))
+        (":\\([A-Za-z0-9]+[ \-]\\)" . ((lambda (tag) tag)))
         
         ;; Task priority
         ("\\[#[A-Z]\\]" . ( (lambda (tag)
@@ -63,6 +58,19 @@
         ("TODO" . ((svg-tag-make "TODO" :face 'org-todo :inverse t :margin 0)))
         ("DONE" . ((svg-tag-make "DONE" :face 'org-done :margin 0)))
 
+
+        ;; Citation of the form [cite:@Knuth:1984] 
+        ("\\(\\[cite:@[A-Za-z]+:\\)" . ((lambda (tag)
+                                          (svg-tag-make tag
+                                                        :inverse t
+                                                        :beg 7 :end -1
+                                                        :crop-right t))))
+        ("\\[cite:@[A-Za-z]+:\\([0-9]+\\]\\)" . ((lambda (tag)
+                                                (svg-tag-make tag
+                                                              :end -1
+                                                              :crop-left t))))
+
+        
         ;; Active date (without day name, with or without time)
         (,(format "\\(<%s>\\)" date-re) .
          ((lambda (tag)
@@ -88,7 +96,7 @@
 (svg-tag-mode t)
 
 ;; To do:         TODO DONE  
-;; Tags:          :MEETING:NOTE:
+;; Tags:          :TAG1:TAG2:TAG3:
 ;; Priorities:    [#A] [#B] [#C]
 ;; Progress:      [1/3]
 ;;                [42%]
@@ -96,3 +104,4 @@
 ;;                <2021-12-24 14:00>
 ;; Inactive date: [2021-12-24]
 ;;                [2021-12-24 14:00]
+;; Citation:      [cite:@Knuth:1984] 
