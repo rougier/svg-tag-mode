@@ -1,12 +1,11 @@
 ;;; svg-tag-mode.el --- Replace keywords with SVG tags -*- lexical-binding: t -*-
 
-;; Copyright (C) 2020, 2021 Nicolas P. Rougier
 ;; Copyright (C) 2020, 2021 Free Software Foundation, Inc.
 
 ;; Author: Nicolas P. Rougier <Nicolas.Rougier@inria.fr>
 ;; Homepage: https://github.com/rougier/svg-tag-mode
 ;; Keywords: convenience
-;; Version: 0.3
+;; Version: 0.3.1
 
 ;; Package-Requires: ((emacs "27.1") (svg-lib "0.3"))
 
@@ -98,6 +97,9 @@
 ;;
 ;;; NEWS:
 ;;
+;; Version 0.4
+;; - Tags must now be created through a function call.
+;;
 ;; Version 0.3:
 ;; - Tags are now editable when cursor is inside.
 ;;
@@ -124,8 +126,7 @@
   "Action to be executed when the cursor enter a tag area"
   :type '(radio (const :tag "Edit tag"  edit)
                 (const :tag "Echo tag"  echo)
-                (const :tag "No action" nil))
-  :group 'svg-tag)
+                (const :tag "No action" nil)))
 
 (defun svg-tag--plist-delete (plist property)
   "Delete PROPERTY from PLIST.
