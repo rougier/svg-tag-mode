@@ -142,11 +142,8 @@ This is in contrast to merely setting it to 0."
   "An alist mapping keywords to tags used to display them.
 
 Each entry has the form (keyword . tag).  Keyword is used as part
-of a regular expression and tag can be either a svg tag
-previously created by `svg-tag-make' or a function that takes a
-string as argument and returns a tag.  When tag is a function, this
-allows to create dynamic tags."
-  :group 'svg-tag
+of a regular expression and tag is  a function that takes a
+string as argument and returns a SVG tag."
   :type '(repeat (cons (string :tag "Keyword")
                        (list (sexp     :tag "Tag")
                              (sexp     :tag "Command")
@@ -230,19 +227,19 @@ allows to create dynamic tags."
   (let* ((pattern  (if (string-match "\\\\(.+\\\\)" (car item))
                        (car item)
                      (format "\\(%s\\)" (car item))))
-         (tag      (nth 0 (cdr item)))
+         (tag      `(funcall ',(nth 0 (cdr item)) (match-string 1)))
          (callback (nth 1 (cdr item)))
+         (map (when callback
+                (let ((map (make-sparse-keymap)))
+                  (define-key map [mouse-1] callback)
+                  map)))
          (help     (nth 2 (cdr item))))
-    (when (or (functionp tag) (and (symbolp tag) (fboundp tag)))
-      (setq tag `(,tag (match-string 1))))
     (setq tag ``(face nil
                  display ,,tag
                  cursor-sensor-functions (svg-tag--cursor-function)
                  ,@(if ,callback '(pointer hand))
                  ,@(if ,help `(help-echo ,,help))
-                 ;; FIXME: Don't hard-code the internal representation
-                 ;; of keymaps.
-                 ,@(if ,callback `(keymap (keymap (mouse-1  . ,,callback))))))
+                 ,@',(if map `(keymap ,map))))
     `(,pattern 1 ,tag)))
 
 (defun svg-tag--remove-text-properties (oldfun start end props &rest args)
