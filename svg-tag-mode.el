@@ -1,6 +1,7 @@
 ;;; svg-tag-mode.el --- Replace keywords with SVG tags -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2020, 2021 Nicolas P. Rougier
+;; Copyright (C) 2020, 2021 Free Software Foundation, Inc.
 
 ;; Author: Nicolas P. Rougier <Nicolas.Rougier@inria.fr>
 ;; Homepage: https://github.com/rougier/svg-tag-mode
