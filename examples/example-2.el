@@ -55,8 +55,8 @@
                                           (svg-progress-count (substring tag 1 -1)))))
         
         ;; TODO / DONE
-        ("TODO" . ((svg-tag-make "TODO" :face 'org-todo :inverse t :margin 0)))
-        ("DONE" . ((svg-tag-make "DONE" :face 'org-done :margin 0)))
+        ("TODO" . ((lambda (tag) (svg-tag-make "TODO" :face 'org-todo :inverse t :margin 0))))
+        ("DONE" . ((lambda (tag) (svg-tag-make "DONE" :face 'org-done :margin 0))))
 
 
         ;; Citation of the form [cite:@Knuth:1984] 
