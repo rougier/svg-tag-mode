@@ -5,9 +5,9 @@
 ;; Author: Nicolas P. Rougier <Nicolas.Rougier@inria.fr>
 ;; Homepage: https://github.com/rougier/svg-tag-mode
 ;; Keywords: convenience
-;; Version: 0.3.1
+;; Version: 0.3.2
 
-;; Package-Requires: ((emacs "27.1") (svg-lib "0.3"))
+;; Package-Requires: ((emacs "27.1") (svg-lib "0.2"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -97,10 +97,10 @@
 ;;
 ;;; NEWS:
 ;;
-;; Version 0.4
-;; - Tags must now be created through a function call.
+;; Version 0.3.2
+;; - Fixed dependency on svg-lib
 ;;
-;; Version 0.3:
+;; Version 0.3.1:
 ;; - Tags are now editable when cursor is inside.
 ;;
 ;; Version 0.2:
