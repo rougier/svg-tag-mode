@@ -31,7 +31,7 @@ then you can invoke mode with `M-x svg-tag-mode`. Here are some examples:
 
 ```lisp
 (setq svg-tag-tags
-      '((":TODO:" . ((svg-tag-make "TODO")))))
+      '((":TODO:" . ((lambda (tag) (svg-tag-make "TODO"))))))
 ```
 
 2. Replace any occurence of `:HELLO:` with a static SVG tag displaying
@@ -40,7 +40,7 @@ then you can invoke mode with `M-x svg-tag-mode`. Here are some examples:
 
 ```lisp
 (setq svg-tag-tags
-      '((":HELLO:" .  ((svg-tag-make "HELLO")
+      '((":HELLO:" .  ((lambda (tag) (svg-tag-make "HELLO"))
                        (lambda () (interactive) (message "Hello world!"))
                        "Print a greeting message"))))
 ```
@@ -51,7 +51,7 @@ then you can invoke mode with `M-x svg-tag-mode`. Here are some examples:
 
 ```lisp
 (setq svg-tag-tags
-      '((":TODO:" . (svg-tag-make))))
+      '((":TODO:" . ((lambda (tag) (svg-tag-make tag))))))
 ```
 
 4. Replace any occurence of `:TODO:` with a dynamic SVG tag displaying `TODO`
