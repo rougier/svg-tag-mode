@@ -36,7 +36,7 @@
 ;;                                      (svg-tag-make "TODO"))))))
 ;;
 ;; Each item has the form '(KEYWORD (TAG COMMAND HELP)) where:
-;;  - KEYWORD is a regular expression including a matched group of 
+;;  - KEYWORD is a regular expression including a matched group of
 ;;    the form "\\(xxx\\)". If this is not the case the whole
 ;;    string will be used a the matched group.
 ;;  - TAG is either a SVG image that will be displayed using the
@@ -152,7 +152,7 @@ string as argument and returns a SVG tag."
 
 (defun svg-tag-make (tag &optional &rest args)
   "Return a svg tag displaying TAG and using specified ARGS.
-   
+
   ARGS are passed to the `svg-lib-tag' function but there are
   supplementary arguments:
 
@@ -172,7 +172,7 @@ string as argument and returns a SVG tag."
    cannot be specified because thay are overwritten by the
    function. If you need full control of tag appearance, best is
    to call svg-lib-tag directly."
-  
+
   (let* ((face (or (plist-get args :face) 'default))
          (inverse (or (plist-get args :inverse) nil))
          (tag (string-trim tag))
@@ -213,7 +213,7 @@ string as argument and returns a SVG tag."
             (font-lock-flush beg end )
           (if (and (not view-read-only) (not buffer-read-only))
               (font-lock-unfontify-region beg end))))
-    
+
     (if (eq svg-tag-action-at-point 'echo)
         (if (eq direction 'entered)
             (let ((message-log-max nil))
@@ -224,7 +224,7 @@ string as argument and returns a SVG tag."
 
 (defun svg-tag--build-keywords (item)
   "Process an item in order to install it as a new keyword."
-    
+
   (let* ((pattern  (if (string-match "\\\\(.+\\\\)" (car item))
                        (car item)
                      (format "\\(%s\\)" (car item))))
@@ -256,7 +256,7 @@ string as argument and returns a SVG tag."
         (apply oldfun args))
     (advice-remove 'remove-text-properties
                      #'svg-tag--remove-text-properties)))
-    
+
 (defun svg-tag-mode-on ()
   "Activate SVG tag mode."
   (add-to-list 'font-lock-extra-managed-props 'display)
@@ -283,9 +283,8 @@ string as argument and returns a SVG tag."
   ;; Flush buffer when entering read-only
   (add-hook 'read-only-mode-hook
             #'(lambda () (font-lock-flush (point-min) (point-max))))
-  
+
   ;; Redisplay everything to show tags
-  (message "SVG tag mode on")
   (cursor-sensor-mode 1)
   (font-lock-flush))
 
@@ -303,7 +302,6 @@ string as argument and returns a SVG tag."
                  #'svg-tag--org-fontify-meta-lines-and-blocks)
 
   ;; Redisplay everything to hide tags
-  (message "SVG tag mode off")
   (cursor-sensor-mode -1)
   (font-lock-flush))
 
