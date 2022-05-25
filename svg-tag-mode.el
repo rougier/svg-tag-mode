@@ -150,6 +150,12 @@ string as argument and returns a SVG tag."
                              (sexp     :tag "Command")
                              (sexp     :tag "Help")))))
 
+(defface svg-tag-default-face
+  '((t :inherit default))
+  "Default face"
+  :group 'svg-tag)
+
+
 (defun svg-tag-make (tag &optional &rest args)
   "Return a svg tag displaying TAG and using specified ARGS.
    
@@ -173,7 +179,7 @@ string as argument and returns a SVG tag."
    function. If you need full control of tag appearance, best is
    to call svg-lib-tag directly."
   
-  (let* ((face (or (plist-get args :face) 'default))
+  (let* ((face (or (plist-get args :face) 'svg-tag-default-face))
          (inverse (or (plist-get args :inverse) nil))
          (tag (string-trim tag))
          (beg (or (plist-get args :beg) 0))
