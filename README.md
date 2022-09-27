@@ -95,3 +95,25 @@ then you can invoke mode with `M-x svg-tag-mode`. Here are some examples:
         ("\\(:#[A-Za-z0-9]+:\\)$" . ((lambda (tag)
                                        (svg-tag-make tag :beg 2 :end -1))))))
 ```                                       
+
+## Known Problems
+### SVG tags cannot render in org-agenda
+As [issue #27](https://github.com/rougier/svg-tag-mode/issues/27) mentioned, SVG tags cannot render in org-agenda, because
+`svg-tag-mode` uses `font-lock-mode` to show SVG tags. However, `org-agenda`
+does not use `font-lock-mode`, so it only shows rendered SVG tags in visited
+buffers. One way to solve this problem is to use overly:
+```
+  (defun org-agenda-show-svg ()
+    (let* ((case-fold-search nil)
+           (keywords (mapcar #'svg-tag--build-keywords svg-tag--active-tags))
+           (keyword (car keywords)))
+      (while keyword
+        (save-excursion
+          (while (re-search-forward (nth 0 keyword) nil t)
+            (overlay-put (make-overlay
+                          (match-beginning 0) (match-end 0))
+                         'display  (nth 3 (eval (nth 2 keyword)))) ))
+        (pop keywords)
+        (setq keyword (car keywords)))))
+  (add-hook 'org-agenda-finalize-hook #'org-agenda-show-svg)
+```
