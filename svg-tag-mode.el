@@ -156,6 +156,15 @@ string as argument and returns a SVG tag."
   :group 'svg-tag)
 
 
+(defun svg-tag--face-attribute (face attribute)
+  "Return the value of FACE's ATTRIBUTE in the selected frame.
+FACE can either be a face or a property list."
+  (if (facep face)
+      (face-attribute face attribute nil 'default)
+    (or (plist-get face attribute)
+        (face-attribute 'svg-tag-default-face attribute nil 'default))))
+
+
 (defun svg-tag-make (tag &optional &rest args)
   "Return a svg tag displaying TAG and using specified ARGS.
    
@@ -168,8 +177,8 @@ string as argument and returns a SVG tag."
   :end (integer) specifies the last index of the tag substring to
                  take into account (default nil)
 
-  :face (face) indicates the face to use to compute foreground &
-               background color (default 'default)
+  :face (face) indicates the face or property list to use to compute 
+               foreground & background color. (default 'default)
 
   :inverse (bool) indicates whether to inverse foreground &
                   background color (default nil)
@@ -180,6 +189,8 @@ string as argument and returns a SVG tag."
    to call svg-lib-tag directly."
   
   (let* ((face (or (plist-get args :face) 'svg-tag-default-face))
+         (foreground (svg-tag--face-attribute face :foreground))
+         (background (svg-tag--face-attribute face :background))
          (inverse (or (plist-get args :inverse) nil))
          (tag (string-trim tag))
          (beg (or (plist-get args :beg) 0))
@@ -192,15 +203,15 @@ string as argument and returns a SVG tag."
         (apply #'svg-lib-tag (substring tag beg end) nil
                :stroke 0
                :font-weight 'semibold
-               :foreground (face-background face nil 'default)
-               :background (face-foreground face nil 'default)
+               :foreground background
+               :background foreground
                args)
       (apply #'svg-lib-tag (substring tag beg end) nil
-                   :stroke 2
-                   :font-weight 'regular
-                   :foreground (face-foreground face nil 'default)
-                   :background (face-background face nil 'default)
-                   args))))
+             :stroke 2
+             :font-weight 'regular
+             :foreground foreground
+             :background background
+             args))))
 
 (defun svg-tag--cursor-function (_win position direction)
   "This function processes action at point. Action can be:
