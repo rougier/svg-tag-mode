@@ -259,6 +259,7 @@ attribute from ``svg-tag-default-face''."
          (help     (nth 2 (cdr item))))
     (setq tag ``(face nil
                  display ,,tag
+                 match-data ,(substring-no-properties (match-string 1))
                  cursor-sensor-functions (svg-tag--cursor-function)
                  ,@(if ,callback '(pointer hand))
                  ,@(if ,help `(help-echo ,,help))
