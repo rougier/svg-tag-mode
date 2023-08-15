@@ -308,7 +308,6 @@ attribute from ``svg-tag-default-face''."
             #'(lambda () (font-lock-flush (point-min) (point-max))))
   
   ;; Redisplay everything to show tags
-  (message "SVG tag mode on")
   (cursor-sensor-mode 1)
   (font-lock-flush))
 
@@ -326,7 +325,6 @@ attribute from ``svg-tag-default-face''."
                  #'svg-tag--org-fontify-meta-lines-and-blocks)
 
   ;; Redisplay everything to hide tags
-  (message "SVG tag mode off")
   (cursor-sensor-mode -1)
   (font-lock-flush))
 
