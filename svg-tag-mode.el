@@ -94,9 +94,9 @@
 ;;         ("\\(:#[A-Za-z0-9]+:\\)$" . ((lambda (tag)
 ;;                                        (svg-tag-make tag :beg 2
 ;;                                                          :end -1))))))
-;;
+
 ;;; NEWS:
-;;
+
 ;; Version 0.3.2
 ;; - Fixed dependency on svg-lib
 ;;
@@ -109,9 +109,9 @@
 ;;
 ;; Version 0.1:
 ;; - Proof of concept
-;;
 
 ;;; Code:
+
 (require 'svg-lib)
 
 (defvar svg-tag--active-tags nil
@@ -155,7 +155,6 @@ string as argument and returns a SVG tag."
   "Default face"
   :group 'svg-tag)
 
-
 (defun svg-tag--face-attribute (face attribute)
   "Return the value of FACE's ATTRIBUTE in the selected frame.
 FACE can either be a face, property list (i.e., an anonymous
@@ -168,7 +167,6 @@ attribute from ``svg-tag-default-face''."
         face
       (or (plist-get face attribute)
           (face-attribute 'svg-tag-default-face attribute nil 'default)))))
-
 
 (defun svg-tag-make (tag &optional &rest args)
   "Return a svg tag displaying TAG and using specified ARGS.
@@ -192,7 +190,6 @@ attribute from ``svg-tag-default-face''."
    cannot be specified because thay are overwritten by the
    function. If you need full control of tag appearance, best is
    to call svg-lib-tag directly."
-
   (let* ((face (or (plist-get args :face) 'svg-tag-default-face))
          (foreground (svg-tag--face-attribute face :foreground))
          (background (svg-tag--face-attribute face :background))
@@ -246,7 +243,6 @@ attribute from ``svg-tag-default-face''."
 
 (defun svg-tag--build-keywords (item)
   "Process an item in order to install it as a new keyword."
-
   (let* ((pattern  (if (string-match "\\\\(.+\\\\)" (car item))
                        (car item)
                      (format "\\(%s\\)" (car item))))
@@ -313,7 +309,6 @@ attribute from ``svg-tag-default-face''."
 
 (defun svg-tag-mode-off ()
   "Deactivate SVG tag mode."
-
   ;; Remove currently active tags
   (when svg-tag--active-tags
     (font-lock-remove-keywords nil
