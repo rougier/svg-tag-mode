@@ -132,8 +132,8 @@
 This is in contrast to merely setting it to 0."
   (let (p)
     (while plist
-      (if (not (eq property (car plist)))
-          (setq p (plist-put p (car plist) (nth 1 plist))))
+      (unless (eq property (car plist))
+        (setq p (plist-put p (car plist) (nth 1 plist))))
       (setq plist (cddr plist)))
     p))
 
@@ -246,18 +246,18 @@ attribute from ``svg-tag-default-face''."
                      (format "\\(%s\\)" (car item))))
          (tag      `(funcall ',(nth 0 (cdr item)) (match-string 1)))
          (callback (nth 1 (cdr item)))
-         (map (when callback
-                (let ((map (make-sparse-keymap)))
-                  (define-key map [mouse-1] callback)
-                  map)))
+         (map      (and callback
+                        (let ((map (make-sparse-keymap)))
+                          (define-key map [mouse-1] callback)
+                          map)))
          (help     (nth 2 (cdr item))))
     (setq tag ``(face nil
                  display ,,tag
                  match-data ,(substring-no-properties (match-string 1))
                  cursor-sensor-functions (svg-tag--cursor-function)
-                 ,@(if ,callback '(pointer hand))
-                 ,@(if ,help `(help-echo ,,help))
-                 ,@',(if map `(keymap ,map))))
+                 ,@(and ,callback '(pointer hand))
+                 ,@(and ,help `(help-echo ,,help))
+                 ,@',(and map `(keymap ,map))))
     `(,pattern 1 ,tag)))
 
 (defun svg-tag--remove-text-properties (oldfun start end props &rest args)
