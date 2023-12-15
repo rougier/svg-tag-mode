@@ -334,4 +334,7 @@ attribute from ``svg-tag-default-face''."
 (define-globalized-minor-mode global-svg-tag-mode svg-tag-mode svg-tag-mode-on)
 
 (provide 'svg-tag-mode)
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:
 ;;; svg-tag-mode.el ends here
