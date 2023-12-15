@@ -160,12 +160,12 @@ FACE can either be a face, property list (i.e., an anonymous
 face), or a string (assumed to be the foreground attribute). If
 ATTRIBUTE is not specified in FACE, then use the corresponding
 attribute from ``svg-tag-default-face''."
-  (if (facep face)
-      (face-attribute face attribute nil 'default)
-    (if (and (stringp face) (eq attribute :foreground))
-        face
-      (or (plist-get face attribute)
-          (face-attribute 'svg-tag-default-face attribute nil 'default)))))
+  (cond ((facep face)
+         (face-attribute face attribute nil 'default))
+        ((and (stringp face) (eq attribute :foreground))
+         face)
+        ((plist-get face attribute))
+        ((face-attribute 'svg-tag-default-face attribute nil 'default))))
 
 (defun svg-tag-make (tag &optional &rest args)
   "Return a svg tag displaying TAG and using specified ARGS.
@@ -226,19 +226,18 @@ attribute from ``svg-tag-default-face''."
                  (next-single-property-change (point) 'display) 
                (next-single-property-change position 'display))))
 
-    (if (eq svg-tag-action-at-point 'edit)
-        (if (eq direction 'left)
-            (font-lock-flush beg end )
-          (if (and (not view-read-only) (not buffer-read-only))
-              (font-lock-unfontify-region beg end))))
+    (cond ((not (eq svg-tag-action-at-point 'edit)))
+          ((eq direction 'left)
+           (font-lock-flush beg end))
+          ((and (not view-read-only) (not buffer-read-only))
+           (font-lock-unfontify-region beg end)))
 
-    (if (eq svg-tag-action-at-point 'echo)
-        (if (eq direction 'entered)
-            (let ((message-log-max nil))
-              (message (concat "TAG: "
-                               (substring-no-properties
-                                (string-trim
-                                 (buffer-substring beg end ))))))))))
+    (when (and (eq svg-tag-action-at-point 'echo)
+               (eq direction 'entered))
+      (let ((message-log-max nil))
+        (message (concat "TAG: "
+                         (substring-no-properties
+                          (string-trim (buffer-substring beg end )))))))))
 
 (defun svg-tag--build-keywords (item)
   "Process an item in order to install it as a new keyword."
