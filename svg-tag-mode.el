@@ -328,6 +328,7 @@ attribute from ``svg-tag-default-face''."
   (cursor-sensor-mode -1)
   (font-lock-flush))
 
+;;;###autoload
 (define-minor-mode svg-tag-mode
   "Minor mode for graphical tag as rounded box."
   :group 'svg-tag
@@ -335,8 +336,8 @@ attribute from ``svg-tag-default-face''."
       (svg-tag-mode-on)
     (svg-tag-mode-off)))
 
-(define-globalized-minor-mode
-   global-svg-tag-mode svg-tag-mode svg-tag-mode-on)
+;;;###autoload
+(define-globalized-minor-mode global-svg-tag-mode svg-tag-mode svg-tag-mode-on)
 
 (provide 'svg-tag-mode)
 ;;; svg-tag-mode.el ends here
