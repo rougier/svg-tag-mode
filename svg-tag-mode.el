@@ -28,7 +28,7 @@
 
 ;; This minor mode replaces keywords or expressions with SVG tags
 ;; that are fully customizable and activable.
-;;
+
 ;; Usage example:
 ;; --------------
 ;;
@@ -46,8 +46,7 @@
 ;;    It can be nil if no command is associated with the tag.
 ;;  - HELP is a string to be displayed when mouse pointer is over
 ;;    the tag. It can be nil if no command is associated with the tag.
-;;
-;;
+
 ;; Examples:
 ;; ---------
 ;;
