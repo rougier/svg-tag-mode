@@ -251,13 +251,13 @@ attribute from ``svg-tag-default-face''."
                           (define-key map [mouse-1] callback)
                           map)))
          (help     (nth 2 (cdr item))))
-    (setq tag ``(face nil
-                 display ,,tag
-                 match-data ,(substring-no-properties (match-string 1))
-                 cursor-sensor-functions (svg-tag--cursor-function)
-                 ,@(and ,callback '(pointer hand))
-                 ,@(and ,help `(help-echo ,,help))
-                 ,@',(and map `(keymap ,map))))
+    (setq tag ``( face nil
+                  display ,,tag
+                  match-data ,(substring-no-properties (match-string 1))
+                  cursor-sensor-functions (svg-tag--cursor-function)
+                  ,@(and ,callback '(pointer hand))
+                  ,@(and ,help `(help-echo ,,help))
+                  ,@',(and map `(keymap ,map))))
     `(,pattern 1 ,tag)))
 
 (defun svg-tag--remove-text-properties (oldfun start end props &rest args)
@@ -272,7 +272,7 @@ attribute from ``svg-tag-default-face''."
                     :around #'svg-tag--remove-text-properties)
         (apply oldfun args))
     (advice-remove 'remove-text-properties
-                     #'svg-tag--remove-text-properties)))
+                   #'svg-tag--remove-text-properties)))
 
 (defun svg-tag-mode-on ()
   "Activate SVG tag mode."
@@ -280,8 +280,8 @@ attribute from ``svg-tag-default-face''."
 
   ;; Remove currently active tags
   (when svg-tag--active-tags
-    (font-lock-remove-keywords nil
-          (mapcar #'svg-tag--build-keywords svg-tag--active-tags)))
+    (font-lock-remove-keywords
+     nil (mapcar #'svg-tag--build-keywords svg-tag--active-tags)))
 
   ;; Install tags
   (dolist (tag svg-tag-tags)
@@ -309,8 +309,8 @@ attribute from ``svg-tag-default-face''."
   "Deactivate SVG tag mode."
   ;; Remove currently active tags
   (when svg-tag--active-tags
-    (font-lock-remove-keywords nil
-          (mapcar #'svg-tag--build-keywords svg-tag--active-tags)))
+    (font-lock-remove-keywords
+     nil (mapcar #'svg-tag--build-keywords svg-tag--active-tags)))
   (setq svg-tag--active-tags nil)
 
   ;; Remove advices on org-fontify-meta-lines-and-blocks
