@@ -114,15 +114,15 @@
 (require 'svg-lib)
 
 (defvar svg-tag--active-tags nil
-  "Set of currently active tags")
+  "Set of currently active tags.")
 
 (defgroup svg-tag nil
-  "Replace keywords with SVG rounded box labels"
+  "Replace keywords with SVG rounded box labels."
   :group 'convenience
   :prefix "svg-tag-")
 
 (defcustom svg-tag-action-at-point 'echo
-  "Action to be executed when the cursor enter a tag area"
+  "Action to be executed when the cursor enter a tag area."
   :type '(radio (const :tag "Edit tag"  edit)
                 (const :tag "Echo tag"  echo)
                 (const :tag "No action" nil)))
@@ -151,7 +151,7 @@ string as argument and returns a SVG tag."
 
 (defface svg-tag-default-face
   '((t :inherit default))
-  "Default face"
+  "Default face used for svg tags."
   :group 'svg-tag)
 
 (defun svg-tag--face-attribute (face attribute)
@@ -215,7 +215,8 @@ attribute from ``svg-tag-default-face''."
              args))))
 
 (defun svg-tag--cursor-function (_win position direction)
-  "This function processes action at point. Action can be:
+  "This function processes action at point.
+Action can be:
 - Display the textual tag in the echo area
 - Display the textual tag inline (this allow to edit it
 - Do nothing"
@@ -261,7 +262,7 @@ attribute from ``svg-tag-default-face''."
     `(,pattern 1 ,tag)))
 
 (defun svg-tag--remove-text-properties (oldfun start end props &rest args)
-  "This applies remove-text-properties with `display' removed from props"
+  "This applies remove-text-properties with `display' removed from props."
   (apply oldfun start end (svg-tag--plist-delete props 'display) args))
 
 (defun svg-tag--org-fontify-meta-lines-and-blocks (oldfun &rest args)
