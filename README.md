@@ -27,14 +27,14 @@ item has the form `(KEYWORD (TAG COMMAND HELP))` where:
 then you can invoke mode with `M-x svg-tag-mode`. Here are some examples:
 
 
-1. Replace any occurence of `:TODO:` with a static SVG tag displaying `TODO`
+1. Replace any occurrence of `:TODO:` with a static SVG tag displaying `TODO`
 
 ```lisp
 (setq svg-tag-tags
       '((":TODO:" . ((lambda (tag) (svg-tag-make "TODO"))))))
 ```
 
-2. Replace any occurence of `:HELLO:` with a static SVG tag displaying
+2. Replace any occurrence of `:HELLO:` with a static SVG tag displaying
    `HELLO` that can be clicked to execute the specified command. Help
    message is displayed when the tag is hovered with the pointer.
 
@@ -46,7 +46,7 @@ then you can invoke mode with `M-x svg-tag-mode`. Here are some examples:
 ```
 
 
-3. Replace any occurence of `:TODO:` with a dynamic SVG tag displaying
+3. Replace any occurrence of `:TODO:` with a dynamic SVG tag displaying
    `:TODO:`
 
 ```lisp
@@ -54,7 +54,7 @@ then you can invoke mode with `M-x svg-tag-mode`. Here are some examples:
       '((":TODO:" . ((lambda (tag) (svg-tag-make tag))))))
 ```
 
-4. Replace any occurence of `:TODO:` with a dynamic SVG tag displaying `TODO`
+4. Replace any occurrence of `:TODO:` with a dynamic SVG tag displaying `TODO`
 
 ```lisp
 (setq svg-tag-tags
@@ -62,7 +62,7 @@ then you can invoke mode with `M-x svg-tag-mode`. Here are some examples:
                        (svg-tag-make tag :beg 1 :end -1))))))
 ```
 
-5. Replaces any occurence of `:XXX:` with a dynamic SVG tag displaying `XXX`
+5. Replaces any occurrence of `:XXX:` with a dynamic SVG tag displaying `XXX`
 
 ```lisp
 (setq svg-tag-tags
@@ -70,7 +70,7 @@ then you can invoke mode with `M-x svg-tag-mode`. Here are some examples:
                                (svg-tag-make tag :beg 1 :end -1))))))
 ```
 
-6. Replaces any occurence of `:XXX|YYY:` with two adjacent dynamic SVG
+6. Replaces any occurrence of `:XXX|YYY:` with two adjacent dynamic SVG
    tags displaying `XXX` and `YYY`
 
 ```lisp
@@ -83,7 +83,7 @@ then you can invoke mode with `M-x svg-tag-mode`. Here are some examples:
                                                          :margin 0 :crop-left t))))))
 ```                                                         
 
-7. This replaces any occurence of `:#TAG1:#TAG2:…:$` (`$` means end of
+7. This replaces any occurrence of `:#TAG1:#TAG2:…:$` (`$` means end of
    line) with a dynamic collection of SVG tags. Note the `#` symbol in
    front of tags. This is mandatory because Emacs cannot do regex look
    ahead.
