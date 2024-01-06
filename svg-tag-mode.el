@@ -221,7 +221,7 @@ attribute from ``svg-tag-default-face''."
 (defun svg-tag--cursor-function (_win position direction)
   "This function processes action at point. Action can be:
 - Display the textual tag in the echo area
-- Dispaly the textual tag inline (this allow to edit it
+- Display the textual tag inline (this allow to edit it
 - Do nothing"
   (let ((beg (if (eq direction 'entered)
                  (previous-property-change (+ (point) 1))
