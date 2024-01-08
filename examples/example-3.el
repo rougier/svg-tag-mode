@@ -16,12 +16,12 @@
 ;; see <http://www.gnu.org/licenses/>.
 
 
-;; This replaces any occurence of ":TODO:" with a SVG tag
+;; This replaces any occurrence of ":TODO:" with a SVG tag
 ;; displaying "TODO"
 (setq svg-tag-tags
       '((":TODO:" . ((lambda (tag) (svg-tag-make "TODO" ))))))
 
-;; This replaces any occurence of ":HELLO:" with a static SVG tag that
+;; This replaces any occurrence of ":HELLO:" with a static SVG tag that
 ;; can be clicked to execute the specified command. Help message is
 ;; displayed when the tag is hovered with the pointer.
 (setq svg-tag-tags
@@ -29,13 +29,13 @@
                        (lambda () (interactive) (message "Hello world!"))
                        "Print a greeting message"))))
 
-;; This replaces any occurence of ":XYZ:" with a dynamic SVG tag
+;; This replaces any occurrence of ":XYZ:" with a dynamic SVG tag
 ;; displaying "XYZ"
 (setq svg-tag-tags
       '(("\\(:[A-Z]+:\\)" . ((lambda (tag)
                                  (svg-tag-make tag :beg 1 :end -1))))))
 
-;; This replaces any occurence of ":XXX|YYY:" with two adjacent
+;; This replaces any occurrence of ":XXX|YYY:" with two adjacent
 ;; dynamic SVG tags displaying "XXX" and "YYY"
 (setq svg-tag-tags
       '(("\\(:[A-Z]+\\)\|[a-zA-Z#0-9]+:" .
@@ -49,7 +49,7 @@
                                                   :margin 0
                                                   :crop-left t))))))
 
-;; This replaces any occurence of ":#TAG1:#TAG2:…:$" ($ means end of
+;; This replaces any occurrence of ":#TAG1:#TAG2:…:$" ($ means end of
 ;; line) with a dynamic collection of SVG tags. Note the # symbol in
 ;; front of tags. This is mandatory because Emacs cannot do regex look
 ;; ahead.
