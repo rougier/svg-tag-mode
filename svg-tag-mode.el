@@ -290,9 +290,9 @@ attribute from ``svg-tag-default-face''."
           (mapcar #'svg-tag--build-keywords svg-tag--active-tags)))
 
   ;; Install tags
-  (when svg-tag-tags
+  (dolist (tag svg-tag-tags)
     (font-lock-add-keywords nil
-          (mapcar #'svg-tag--build-keywords svg-tag-tags)))
+                            (list (svg-tag--build-keywords tag)) 'append))
 
   ;; Make a copy of newly installed tags
   (setq svg-tag--active-tags (copy-sequence svg-tag-tags))
