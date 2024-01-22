@@ -224,25 +224,27 @@ attribute from ``svg-tag-default-face''."
 - Display the textual tag inline (this allow to edit it
 - Do nothing"
   (let ((beg (if (eq direction 'entered)
-                 (previous-property-change (+ (point) 1))
-               (previous-property-change (+ position 1))))
+                 (previous-property-change (min (point-max) (+ (point) 1)))
+               (previous-property-change (min (point-max) (+ position 1)))))
         (end (if (eq direction 'entered)
                  (next-property-change (point))
                (next-property-change position))))
 
-    (if (eq svg-tag-action-at-point 'edit)
-        (if (eq direction 'left)
-            (font-lock-flush beg end )
-          (if (and (not view-read-only) (not buffer-read-only))
-              (font-lock-unfontify-region beg end))))
-    
-    (if (eq svg-tag-action-at-point 'echo)
-        (if (eq direction 'entered)
-            (let ((message-log-max nil))
-              (message (concat "TAG: "
-                               (substring-no-properties
-                                (string-trim
-                                 (buffer-substring beg end ))))))))))
+    (when (and beg end (< beg end))
+
+      (if (eq svg-tag-action-at-point 'edit)
+          (if (eq direction 'left)
+              (font-lock-flush beg end)
+            (if (and (not view-read-only) (not buffer-read-only))
+                (font-lock-unfontify-region beg end))))
+
+      (if (eq svg-tag-action-at-point 'echo)
+          (if (eq direction 'entered)
+              (let ((message-log-max nil))
+                (message (concat "TAG: "
+                                 (substring-no-properties
+                                  (string-trim
+                                   (buffer-substring beg end )))))))))))
 
 (defun svg-tag--build-keywords (item)
   "Process an item in order to install it as a new keyword."
