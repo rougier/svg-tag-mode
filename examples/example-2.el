@@ -22,21 +22,27 @@
 (defconst day-time-re (format "\\(%s\\)? ?\\(%s\\)?" day-re time-re))
 
 (defun svg-progress-percent (value)
-  (svg-image (svg-lib-concat
-              (svg-lib-progress-bar (/ (string-to-number value) 100.0)
-                                nil :margin 0 :stroke 2 :radius 3 :padding 2 :width 11)
-              (svg-lib-tag (concat value "%")
-                           nil :stroke 0 :margin 0)) :ascent 'center))
+  (save-match-data
+   (svg-image (svg-lib-concat
+               (svg-lib-progress-bar  (/ (string-to-number value) 100.0)
+                                 nil :margin 0 :stroke 2 :radius 3 :padding 2 :width 11)
+               (svg-lib-tag (concat value "%")
+                            nil :stroke 0 :margin 0)) :ascent 'center)))
 
 (defun svg-progress-count (value)
-  (let* ((seq (mapcar #'string-to-number (split-string value "/")))
-         (count (float (car seq)))
-         (total (float (cadr seq))))
-  (svg-image (svg-lib-concat
-              (svg-lib-progress-bar (/ count total) nil
-                                    :margin 0 :stroke 2 :radius 3 :padding 2 :width 11)
-              (svg-lib-tag value nil
-                           :stroke 0 :margin 0)) :ascent 'center)))
+  (save-match-data
+    (let* ((seq (split-string value "/"))           
+           (count (if (stringp (car seq))
+                      (float (string-to-number (car seq)))
+                    0))
+           (total (if (stringp (cadr seq))
+                      (float (string-to-number (cadr seq)))
+                    1000)))
+      (svg-image (svg-lib-concat
+                  (svg-lib-progress-bar (/ count total) nil
+                                        :margin 0 :stroke 2 :radius 3 :padding 2 :width 11)
+                  (svg-lib-tag value nil
+                               :stroke 0 :margin 0)) :ascent 'center))))
 
 (setq svg-tag-tags
       `(
@@ -49,12 +55,6 @@
                               (svg-tag-make tag :face 'org-priority 
                                             :beg 2 :end -1 :margin 0))))
 
-        ;; Progress
-        ("\\(\\[[0-9]\\{1,3\\}%\\]\\)" . ((lambda (tag)
-                                            (svg-progress-percent (substring tag 1 -2)))))
-        ("\\(\\[[0-9]+/[0-9]+\\]\\)" . ((lambda (tag)
-                                          (svg-progress-count (substring tag 1 -1)))))
-        
         ;; TODO / DONE
         ("TODO" . ((lambda (tag) (svg-tag-make "TODO" :face 'org-todo :inverse t :margin 0))))
         ("DONE" . ((lambda (tag) (svg-tag-make "DONE" :face 'org-done :margin 0))))
@@ -92,7 +92,14 @@
              (svg-tag-make tag :beg 1 :inverse nil :crop-right t :margin 0 :face 'org-date))))
          (,(format "\\[%s \\(%s\\]\\)" date-re day-time-re) .
           ((lambda (tag)
-             (svg-tag-make tag :end -1 :inverse t :crop-left t :margin 0 :face 'org-date))))))
+             (svg-tag-make tag :end -1 :inverse t :crop-left t :margin 0 :face 'org-date))))
+
+        ;; ;; Progress
+        ("\\(\\[[0-9]\\{1,3\\}%\\]\\)" . ((lambda (tag)
+                                            (svg-progress-percent (substring tag 1 -2)))))
+        ("\\(\\[[0-9]+/[0-9]+\\]\\)" . ((lambda (tag)
+                                          (svg-progress-count (substring tag 1 -1)))))
+        ))
 
 (svg-tag-mode t)
 
