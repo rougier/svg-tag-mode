@@ -224,11 +224,11 @@ attribute from ``svg-tag-default-face''."
 - Display the textual tag inline (this allow to edit it
 - Do nothing"
   (let ((beg (if (eq direction 'entered)
-                 (previous-property-change (+ (point) 1))
-               (previous-property-change (+ position 1))))
+                 (previous-single-property-change (+ (point) 1) 'display)
+               (previous-single-property-change (+ position 1) 'display)))
         (end (if (eq direction 'entered)
-                 (next-property-change (point))
-               (next-property-change position))))
+                 (next-single-property-change (point) 'display) 
+               (next-single-property-change position 'display))))
 
     (if (eq svg-tag-action-at-point 'edit)
         (if (eq direction 'left)
