@@ -183,7 +183,7 @@ attribute from ``svg-tag-default-face''."
                  take into account (default nil)
 
   :face (face) indicates the face, property list or string to use to 
-               compute foreground & background color. (default 'default)
+               compute foreground & background color. (default `default')
 
   :inverse (bool) indicates whether to inverse foreground &
                   background color (default nil)
@@ -267,7 +267,7 @@ attribute from ``svg-tag-default-face''."
     `(,pattern 1 ,tag)))
 
 (defun svg-tag--remove-text-properties (oldfun start end props &rest args)
-  "This applies remove-text-properties with 'display removed from props"
+  "This applies remove-text-properties with `display' removed from props"
   (apply oldfun start end (svg-tag--plist-delete props 'display) args))
 
 (defun svg-tag--org-fontify-meta-lines-and-blocks (oldfun &rest args)
