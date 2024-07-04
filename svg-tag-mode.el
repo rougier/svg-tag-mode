@@ -254,7 +254,6 @@ Action can be:
          (help     (nth 2 (cdr item))))
     (setq tag ``( face nil
                   display ,,tag
-                  match-data ,(substring-no-properties (match-string 1))
                   cursor-sensor-functions (svg-tag--cursor-function)
                   ,@(and ,callback '(pointer hand))
                   ,@(and ,help `(help-echo ,,help))
