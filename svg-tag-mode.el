@@ -138,14 +138,14 @@ This is in contrast to merely setting it to 0."
     p))
 
 (defcustom svg-tag-tags
-  `(("^TODO" . ((svg-tag-make "TODO") nil nil)))
+  `((":TODO:" (lambda (_) (svg-tag-make "TODO")) nil nil))
   "An alist mapping keywords to tags used to display them.
 
 Each entry has the form (keyword . tag).  Keyword is used as part
 of a regular expression and tag is  a function that takes a
 string as argument and returns a SVG tag."
   :type '(repeat (cons (string :tag "Keyword")
-                       (list (sexp     :tag "Tag")
+                       (list (function :tag "Tag")
                              (sexp     :tag "Command")
                              (sexp     :tag "Help")))))
 
