@@ -28,7 +28,7 @@
 
 ;; This minor mode replaces keywords or expressions with SVG tags
 ;; that are fully customizable and activable.
-;;
+
 ;; Usage example:
 ;; --------------
 ;;
@@ -36,7 +36,7 @@
 ;;                                      (svg-tag-make "TODO"))))))
 ;;
 ;; Each item has the form '(KEYWORD (TAG COMMAND HELP)) where:
-;;  - KEYWORD is a regular expression including a matched group of 
+;;  - KEYWORD is a regular expression including a matched group of
 ;;    the form "\\(xxx\\)". If this is not the case the whole
 ;;    string will be used a the matched group.
 ;;  - TAG is either a SVG image that will be displayed using the
@@ -46,8 +46,7 @@
 ;;    It can be nil if no command is associated with the tag.
 ;;  - HELP is a string to be displayed when mouse pointer is over
 ;;    the tag. It can be nil if no command is associated with the tag.
-;;
-;;
+
 ;; Examples:
 ;; ---------
 ;;
@@ -94,9 +93,9 @@
 ;;         ("\\(:#[A-Za-z0-9]+:\\)$" . ((lambda (tag)
 ;;                                        (svg-tag-make tag :beg 2
 ;;                                                          :end -1))))))
-;;
+
 ;;; NEWS:
-;;
+
 ;; Version 0.3.2
 ;; - Fixed dependency on svg-lib
 ;;
@@ -109,21 +108,21 @@
 ;;
 ;; Version 0.1:
 ;; - Proof of concept
-;;
 
 ;;; Code:
+
 (require 'svg-lib)
 
 (defvar svg-tag--active-tags nil
-  "Set of currently active tags")
+  "Set of currently active tags.")
 
 (defgroup svg-tag nil
-  "Replace keywords with SVG rounded box labels"
+  "Replace keywords with SVG rounded box labels."
   :group 'convenience
   :prefix "svg-tag-")
 
 (defcustom svg-tag-action-at-point 'echo
-  "Action to be executed when the cursor enter a tag area"
+  "Action to be executed when the cursor enter a tag area."
   :type '(radio (const :tag "Edit tag"  edit)
                 (const :tag "Echo tag"  echo)
                 (const :tag "No action" nil)))
@@ -133,28 +132,27 @@
 This is in contrast to merely setting it to 0."
   (let (p)
     (while plist
-      (if (not (eq property (car plist)))
-	  (setq p (plist-put p (car plist) (nth 1 plist))))
+      (unless (eq property (car plist))
+        (setq p (plist-put p (car plist) (nth 1 plist))))
       (setq plist (cddr plist)))
     p))
 
 (defcustom svg-tag-tags
-  `(("^TODO" . ((svg-tag-make "TODO") nil nil)))
+  `((":TODO:" (lambda (_) (svg-tag-make "TODO")) nil nil))
   "An alist mapping keywords to tags used to display them.
 
 Each entry has the form (keyword . tag).  Keyword is used as part
 of a regular expression and tag is  a function that takes a
 string as argument and returns a SVG tag."
   :type '(repeat (cons (string :tag "Keyword")
-                       (list (sexp     :tag "Tag")
+                       (list (function :tag "Tag")
                              (sexp     :tag "Command")
                              (sexp     :tag "Help")))))
 
 (defface svg-tag-default-face
   '((t :inherit default))
-  "Default face"
+  "Default face used for svg tags."
   :group 'svg-tag)
-
 
 (defun svg-tag--face-attribute (face attribute)
   "Return the value of FACE's ATTRIBUTE in the selected frame.
@@ -162,17 +160,16 @@ FACE can either be a face, property list (i.e., an anonymous
 face), or a string (assumed to be the foreground attribute). If
 ATTRIBUTE is not specified in FACE, then use the corresponding
 attribute from ``svg-tag-default-face''."
-  (if (facep face)
-      (face-attribute face attribute nil 'default)
-    (if (and (stringp face) (eq attribute :foreground))
-        face
-      (or (plist-get face attribute)
-          (face-attribute 'svg-tag-default-face attribute nil 'default)))))
-
+  (cond ((facep face)
+         (face-attribute face attribute nil 'default))
+        ((and (stringp face) (eq attribute :foreground))
+         face)
+        ((plist-get face attribute))
+        ((face-attribute 'svg-tag-default-face attribute nil 'default))))
 
 (defun svg-tag-make (tag &optional &rest args)
   "Return a svg tag displaying TAG and using specified ARGS.
-   
+
   ARGS are passed to the `svg-lib-tag' function but there are
   supplementary arguments:
 
@@ -182,7 +179,7 @@ attribute from ``svg-tag-default-face''."
   :end (integer) specifies the last index of the tag substring to
                  take into account (default nil)
 
-  :face (face) indicates the face, property list or string to use to 
+  :face (face) indicates the face, property list or string to use to
                compute foreground & background color. (default `default')
 
   :inverse (bool) indicates whether to inverse foreground &
@@ -192,7 +189,6 @@ attribute from ``svg-tag-default-face''."
    cannot be specified because thay are overwritten by the
    function. If you need full control of tag appearance, best is
    to call svg-lib-tag directly."
-  
   (let* ((face (or (plist-get args :face) 'svg-tag-default-face))
          (foreground (svg-tag--face-attribute face :foreground))
          (background (svg-tag--face-attribute face :background))
@@ -219,7 +215,8 @@ attribute from ``svg-tag-default-face''."
              args))))
 
 (defun svg-tag--cursor-function (_win position direction)
-  "This function processes action at point. Action can be:
+  "This function processes action at point.
+Action can be:
 - Display the textual tag in the echo area
 - Display the textual tag inline (this allow to edit it
 - Do nothing"
@@ -230,44 +227,41 @@ attribute from ``svg-tag-default-face''."
                  (next-single-property-change (point) 'display) 
                (next-single-property-change position 'display))))
 
-    (if (eq svg-tag-action-at-point 'edit)
-        (if (eq direction 'left)
-            (font-lock-flush beg end )
-          (if (and (not view-read-only) (not buffer-read-only))
-              (font-lock-unfontify-region beg end))))
-    
-    (if (eq svg-tag-action-at-point 'echo)
-        (if (eq direction 'entered)
-            (let ((message-log-max nil))
-              (message (concat "TAG: "
-                               (substring-no-properties
-                                (string-trim
-                                 (buffer-substring beg end ))))))))))
+    (cond ((not (eq svg-tag-action-at-point 'edit)))
+          ((eq direction 'left)
+           (font-lock-flush beg end))
+          ((and (not view-read-only) (not buffer-read-only))
+           (font-lock-unfontify-region beg end)))
+
+    (when (and (eq svg-tag-action-at-point 'echo)
+               (eq direction 'entered))
+      (let ((message-log-max nil))
+        (message (concat "TAG: "
+                         (substring-no-properties
+                          (string-trim (buffer-substring beg end )))))))))
 
 (defun svg-tag--build-keywords (item)
   "Process an item in order to install it as a new keyword."
-    
   (let* ((pattern  (if (string-match "\\\\(.+\\\\)" (car item))
                        (car item)
                      (format "\\(%s\\)" (car item))))
          (tag      `(funcall ',(nth 0 (cdr item)) (match-string 1)))
          (callback (nth 1 (cdr item)))
-         (map (when callback
-                (let ((map (make-sparse-keymap)))
-                  (define-key map [mouse-1] callback)
-                  map)))
+         (map      (and callback
+                        (let ((map (make-sparse-keymap)))
+                          (define-key map [mouse-1] callback)
+                          map)))
          (help     (nth 2 (cdr item))))
-    (setq tag ``(face nil
-                 display ,,tag
-                 match-data ,(substring-no-properties (match-string 1))
-                 cursor-sensor-functions (svg-tag--cursor-function)
-                 ,@(if ,callback '(pointer hand))
-                 ,@(if ,help `(help-echo ,,help))
-                 ,@',(if map `(keymap ,map))))
+    (setq tag ``( face nil
+                  display ,,tag
+                  cursor-sensor-functions (svg-tag--cursor-function)
+                  ,@(and ,callback '(pointer hand))
+                  ,@(and ,help `(help-echo ,,help))
+                  ,@',(and map `(keymap ,map))))
     `(,pattern 1 ,tag)))
 
 (defun svg-tag--remove-text-properties (oldfun start end props &rest args)
-  "This applies remove-text-properties with `display' removed from props"
+  "This applies remove-text-properties with `display' removed from props."
   (apply oldfun start end (svg-tag--plist-delete props 'display) args))
 
 (defun svg-tag--org-fontify-meta-lines-and-blocks (oldfun &rest args)
@@ -278,16 +272,16 @@ attribute from ``svg-tag-default-face''."
                     :around #'svg-tag--remove-text-properties)
         (apply oldfun args))
     (advice-remove 'remove-text-properties
-                     #'svg-tag--remove-text-properties)))
-    
+                   #'svg-tag--remove-text-properties)))
+
 (defun svg-tag-mode-on ()
   "Activate SVG tag mode."
   (add-to-list 'font-lock-extra-managed-props 'display)
 
   ;; Remove currently active tags
   (when svg-tag--active-tags
-    (font-lock-remove-keywords nil
-          (mapcar #'svg-tag--build-keywords svg-tag--active-tags)))
+    (font-lock-remove-keywords
+     nil (mapcar #'svg-tag--build-keywords svg-tag--active-tags)))
 
   ;; Install tags
   (dolist (tag svg-tag-tags)
@@ -306,18 +300,17 @@ attribute from ``svg-tag-default-face''."
   ;; Flush buffer when entering read-only
   (add-hook 'read-only-mode-hook
             #'(lambda () (font-lock-flush (point-min) (point-max))))
-  
+
   ;; Redisplay everything to show tags
   (cursor-sensor-mode 1)
   (font-lock-flush))
 
 (defun svg-tag-mode-off ()
   "Deactivate SVG tag mode."
-
   ;; Remove currently active tags
   (when svg-tag--active-tags
-    (font-lock-remove-keywords nil
-          (mapcar #'svg-tag--build-keywords svg-tag--active-tags)))
+    (font-lock-remove-keywords
+     nil (mapcar #'svg-tag--build-keywords svg-tag--active-tags)))
   (setq svg-tag--active-tags nil)
 
   ;; Remove advices on org-fontify-meta-lines-and-blocks
@@ -328,6 +321,7 @@ attribute from ``svg-tag-default-face''."
   (cursor-sensor-mode -1)
   (font-lock-flush))
 
+;;;###autoload
 (define-minor-mode svg-tag-mode
   "Minor mode for graphical tag as rounded box."
   :group 'svg-tag
@@ -335,8 +329,11 @@ attribute from ``svg-tag-default-face''."
       (svg-tag-mode-on)
     (svg-tag-mode-off)))
 
-(define-globalized-minor-mode
-   global-svg-tag-mode svg-tag-mode svg-tag-mode-on)
+;;;###autoload
+(define-globalized-minor-mode global-svg-tag-mode svg-tag-mode svg-tag-mode-on)
 
 (provide 'svg-tag-mode)
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:
 ;;; svg-tag-mode.el ends here
